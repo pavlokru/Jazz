@@ -1,0 +1,802 @@
+[
+    {
+        "id": 2,
+        "nombre": "Takuya Kuroda",
+        "origen": "Japón",
+        "corriente": [
+            "Post-Bop",
+            "Neo-Soul",
+            "Jazz Fusion",
+            "Afrobeat"
+        ],
+        "instrumento": [
+            "Trompeta"
+        ],
+        "tipo_agrupacion": "Sexteto / Solista",
+        "agrupaciones_propias": [
+            "Takuya Kuroda Band"
+        ],
+        "colaboraciones_clave": [
+            "José James",
+            "Akoya Afrobeat Ensemble"
+        ],
+        "albumes_fundamentales": [
+            "Rising Son (2014)",
+            "Zigzagger (2016)",
+            "Midnight Crisp (2022)"
+        ],
+        "anio_inicio": 2003,
+        "anio_fin": null
+    },
+    {
+        "id": 3,
+        "nombre": "Hadi Eldebek",
+        "origen": "Líbano",
+        "corriente": [
+            "Ethno Jazz",
+            "Arabic Jazz",
+            "World Fusion"
+        ],
+        "instrumento": [
+            "Oud"
+        ],
+        "tipo_agrupacion": "Cuarteto / Solista",
+        "agrupaciones_propias": [
+            "Hadi Eldebek Ensemble"
+        ],
+        "colaboraciones_clave": [
+            "Silkroad Ensemble",
+            "Yo-Yo Ma"
+        ],
+        "albumes_fundamentales": [
+            "Sing Me Home - Silkroad Ensemble (2016)"
+        ],
+        "anio_inicio": 2008,
+        "anio_fin": null
+    },
+    {
+        "id": 4,
+        "nombre": "Ryo Fukui",
+        "origen": "Japón",
+        "corriente": [
+            "Hard Bop",
+            "Modal Jazz",
+            "Japanese Jazz (Japanese Modern Jazz)"
+        ],
+        "instrumento": [
+            "Piano"
+        ],
+        "tipo_agrupacion": "Trío",
+        "agrupaciones_propias": [
+            "Ryo Fukui Trio"
+        ],
+        "colaboraciones_clave": [
+            "Sadao Watanabe",
+            "Yuji Imamura Group"
+        ],
+        "albumes_fundamentales": [
+            "Scenery (1976)",
+            "Mellow Dream (1977)",
+            "My Favorite Tune (1994)"
+        ],
+        "anio_inicio": 1970,
+        "anio_fin": 2016
+    },
+    {
+        "id": 5,
+        "nombre": "Billy Hart",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Post-Bop",
+            "Hard Bop",
+            "Jazz Fusion",
+            "Avant-Garde Jazz"
+        ],
+        "instrumento": [
+            "Batería"
+        ],
+        "tipo_agrupacion": "Cuarteto / Lder de Sesiones",
+        "agrupaciones_propias": [
+            "Billy Hart Quartet",
+            "Enquest"
+        ],
+        "colaboraciones_clave": [
+            "Herbie Hancock Mwandishi",
+            "McCoy Tyner Trio",
+            "Stan Getz Quartet",
+            "Miles Davis Group"
+        ],
+        "albumes_fundamentales": [
+            "Enchancer (1980)",
+            "Oatmeal Musher (1979)",
+            "All Our Reasons (2012)"
+        ],
+        "anio_inicio": 1961,
+        "anio_fin": null
+    },
+    {
+        "id": 6,
+        "nombre": "Jaco Pastorius",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Jazz Fusion",
+            "Electric Jazz",
+            "Post-Bop"
+        ],
+        "instrumento": [
+            "Bajo eléctrico"
+        ],
+        "tipo_agrupacion": "Solista / Big Band / Cuarteto",
+        "agrupaciones_propias": [
+            "Word of Mouth Big Band",
+            "Jaco Pastorius Band"
+        ],
+        "colaboraciones_clave": [
+            "Weather Report",
+            "Joni Mitchell Band",
+            "Pat Metheny Group",
+            "Trio of Doom"
+        ],
+        "albumes_fundamentales": [
+            "Jaco Pastorius (1976)",
+            "Heavy Weather - Weather Report (1977)",
+            "Word of Mouth (1981)"
+        ],
+        "anio_inicio": 1964,
+        "anio_fin": 1987
+    },
+    {
+        "id": 7,
+        "nombre": "Pat Metheny",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Jazz Fusion",
+            "Post-Bop",
+            "Contemporary Jazz",
+            "World Fusion"
+        ],
+        "instrumento": [
+            "Guitarra"
+        ],
+        "tipo_agrupacion": "Cuarteto / Trío / Solista / Big Band",
+        "agrupaciones_propias": [
+            "Pat Metheny Group",
+            "Pat Metheny Unity Band",
+            "Pat Metheny Trio"
+        ],
+        "colaboraciones_clave": [
+            "Jaco Pastorius",
+            "Gary Burton Quartet",
+            "Ornette Coleman",
+            "Charlie Haden",
+            "John Zorn"
+        ],
+        "albumes_fundamentales": [
+            "Bright Size Life (1976)",
+            "Offramp (1982)",
+            "Secret Story (1992)"
+        ],
+        "anio_inicio": 1974,
+        "anio_fin": null
+    },
+    {
+        "id": 8,
+        "nombre": "Mongo Santamaría",
+        "origen": "Cuba",
+        "corriente": [
+            "Afro-Cuban Jazz",
+            "Latin Jazz",
+            "Boogaloo",
+            "Hard Bop"
+        ],
+        "instrumento": [
+            "Congas",
+            "Percusión"
+        ],
+        "tipo_agrupacion": "Septeto / Orquesta / Septeto",
+        "agrupaciones_propias": [
+            "Mongo Santamaría Orchestra",
+            "Mongo Santamaría Band"
+        ],
+        "colaboraciones_clave": [
+            "Perez Prado Orchestra",
+            "Tito Puente Orchestra",
+            "Cal Tjader Modern Mambo Quintet"
+        ],
+        "albumes_fundamentales": [
+            "Yambu (1958)",
+            "Watermelon Man (1963)",
+            "Afro-Indio (1975)"
+        ],
+        "anio_inicio": 1948,
+        "anio_fin": 2003
+    },
+    {
+        "id": 9,
+        "nombre": "Tito Puente",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Afro-Cuban Jazz",
+            "Latin Jazz",
+            "Mambo",
+            "Salsa"
+        ],
+        "instrumento": [
+            "Timbales",
+            "Vibráfono",
+            "Percusión"
+        ],
+        "tipo_agrupacion": "Orquesta / Big Band",
+        "agrupaciones_propias": [
+            "Tito Puente Orchestra",
+            "Tito Puente Golden Latin Jazz All-Stars"
+        ],
+        "colaboraciones_clave": [
+            "Machito and His Afro-Cubans",
+            "Celia Cruz",
+            "George Shearing"
+        ],
+        "albumes_fundamentales": [
+            "Dance Mania (1958)",
+            "El Rey Bravo (1962)",
+            "Mambo Birdland (1999)"
+        ],
+        "anio_inicio": 1939,
+        "anio_fin": 2000
+    },
+    {
+        "id": 10,
+        "nombre": "Cal Tjader",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Latin Jazz",
+            "Cool Jazz",
+            "Afro-Cuban Jazz",
+            "Bossa Nova"
+        ],
+        "instrumento": [
+            "Vibráfono",
+            "Percusión"
+        ],
+        "tipo_agrupacion": "Quinteto / Sexteeto / Solista",
+        "agrupaciones_propias": [
+            "Cal Tjader Modern Mambo Quintet",
+            "Cal Tjader Trio"
+        ],
+        "colaboraciones_clave": [
+            "Dave Brubeck Trio",
+            "George Shearing Quintet",
+            "Eddie Palmieri"
+        ],
+        "albumes_fundamentales": [
+            "Soul Sauce (1965)",
+            "El Sonido Nuevo (1966)",
+            "La Onda Va Bien (1979)"
+        ],
+        "anio_inicio": 1947,
+        "anio_fin": 1982
+    },
+    {
+        "id": 11,
+        "nombre": "John Santos",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Latin Jazz",
+            "Afro-Cuban Jazz",
+            "World Fusion"
+        ],
+        "instrumento": [
+            "Percusión"
+        ],
+        "tipo_agrupacion": "Sexteto / Septeto",
+        "agrupaciones_propias": [
+            "The John Santos Sextet",
+            "Machete Ensemble"
+        ],
+        "colaboraciones_clave": [
+            "Batacumbele",
+            "Dizzy Gillespie",
+            "Max Roach",
+            "Cachao"
+        ],
+        "albumes_fundamentales": [
+            "Africa (1988)",
+            "Machete (1995)",
+            "Perspectiva Fragmentada (2008)"
+        ],
+        "anio_inicio": 1970,
+        "anio_fin": null
+    },
+    {
+        "id": 12,
+        "nombre": "Bobby Sanabria",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Latin Jazz",
+            "Afro-Cuban Jazz",
+            "Hard Bop",
+            "Big Band"
+        ],
+        "instrumento": [
+            "Batería",
+            "Timbales",
+            "Percusión"
+        ],
+        "tipo_agrupacion": "Big Band / Cuarteto / Solista",
+        "agrupaciones_propias": [
+            "Bobby Sanabria Multiverse Big Band",
+            "Ascensión"
+        ],
+        "colaboraciones_clave": [
+            "Dizzy Gillespie",
+            "Tito Puente Orchestra",
+            "Monguito Santamaría",
+            "Mario Bauzá Afro-Cuban Jazz Orchestra"
+        ],
+        "albumes_fundamentales": [
+            "Afro-Cuban Dream: Live & In Clave!!! (2000)",
+            "Multiverse (2012)",
+            "West Side Story Reimagined (2018)"
+        ],
+        "anio_inicio": 1975,
+        "anio_fin": null
+    },
+    {
+        "id": 13,
+        "nombre": "Michel Camilo",
+        "origen": "República Dominicana",
+        "corriente": [
+            "Latin Jazz",
+            "Post-Bop",
+            "Jazz Fusion",
+            "Classical Crossover"
+        ],
+        "instrumento": [
+            "Piano"
+        ],
+        "tipo_agrupacion": "Trío / Solista / Big Band",
+        "agrupaciones_propias": [
+            "Michel Camilo Trio"
+        ],
+        "colaboraciones_clave": [
+            "Tomatito",
+            "Paquito D'Rivera",
+            "Dizzy Gillespie",
+            "Gary Burton"
+        ],
+        "albumes_fundamentales": [
+            "Michel Camilo (1988)",
+            "Rendezvous (1993)",
+            "Spain (con Tomatito) (2000)"
+        ],
+        "anio_inicio": 1979,
+        "anio_fin": null
+    },
+    {
+        "id": 14,
+        "nombre": "Willie Bobo",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Latin Jazz",
+            "Boogaloo",
+            "Afro-Cuban Jazz",
+            "Latin Soul"
+        ],
+        "instrumento": [
+            "Timbales",
+            "Percusión"
+        ],
+        "tipo_agrupacion": "Septeto / Quinteto",
+        "agrupaciones_propias": [
+            "Willie Bobo & His Boogaloo Blues Band"
+        ],
+        "colaboraciones_clave": [
+            "Cal Tjader Quintet",
+            "Mongo Santamaría Orchestra",
+            "Tito Puente Orchestra",
+            "Miles Davis Group"
+        ],
+        "albumes_fundamentales": [
+            "Spanish Grease (1965)",
+            "Uno, Dos, Tres 1.2.3 (1966)",
+            "Hell Of A Act To Follow (1978)"
+        ],
+        "anio_inicio": 1950,
+        "anio_fin": 1983
+    },
+    {
+        "id": 15,
+        "nombre": "Gato Barbieri",
+        "origen": "Argentina",
+        "corriente": [
+            "Avant-Garde Jazz",
+            "Free Jazz",
+            "Latin Jazz",
+            "Jazz Fusion"
+        ],
+        "instrumento": [
+            "Saxofón tenor"
+        ],
+        "tipo_agrupacion": "Cuarteto / Quinteto / Solista",
+        "agrupaciones_propias": [
+            "Gato Barbieri Band"
+        ],
+        "colaboraciones_clave": [
+            "Don Cherry",
+            "Charlie Haden Liberation Music Orchestra",
+            "Lalo Schifrin"
+        ],
+        "albumes_fundamentales": [
+            "The Third World (1969)",
+            "Fenix (1971)",
+            "Chapter One: Latin America (1973)"
+        ],
+        "anio_inicio": 1953,
+        "anio_fin": 2016
+    },
+    {
+        "id": 16,
+        "nombre": "Ron Carter",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Hard Bop",
+            "Post-Bop",
+            "Cool Jazz",
+            "Third Stream"
+        ],
+        "instrumento": [
+            "Contrabajo"
+        ],
+        "tipo_agrupacion": "Trío / Cuarteto / Solista",
+        "agrupaciones_propias": [
+            "Ron Carter Trio",
+            "Ron Carter Quartet",
+            "Nonet"
+        ],
+        "colaboraciones_clave": [
+            "Miles Davis Second Great Quintet",
+            "Herbie Hancock",
+            "CTI All-Stars",
+            "McCoy Tyner"
+        ],
+        "albumes_fundamentales": [
+            "Uptown Conversation (1969)",
+            "Piccolo (1977)",
+            "Telephone (con Jim Hall) (1984)"
+        ],
+        "anio_inicio": 1959,
+        "anio_fin": null
+    },
+    {
+        "id": 17,
+        "nombre": "Paquito D'Rivera",
+        "origen": "Cuba",
+        "corriente": [
+            "Latin Jazz",
+            "Afro-Cuban Jazz",
+            "Bebop",
+            "Classical Crossover"
+        ],
+        "instrumento": [
+            "Saxofón alto",
+            "Clarinete"
+        ],
+        "tipo_agrupacion": "Quinteto / Big Band / Solista",
+        "agrupaciones_propias": [
+            "Paquito D'Rivera Quintet",
+            "The Havana-New York Ensemble"
+        ],
+        "colaboraciones_clave": [
+            "Irakere",
+            "Dizzy Gillespie United Nation Orchestra",
+            "Yo-Yo Ma"
+        ],
+        "albumes_fundamentales": [
+            "Blowin' (1981)",
+            "Manhattan Burn (1987)",
+            "Tropicana Nights (1999)"
+        ],
+        "anio_inicio": 1962,
+        "anio_fin": null
+    },
+    {
+        "id": 18,
+        "nombre": "Keith Jarrett",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Modal Jazz",
+            "Free Jazz",
+            "Post-Bop",
+            "Improvisación Libre"
+        ],
+        "instrumento": [
+            "Piano"
+        ],
+        "tipo_agrupacion": "Trío / Solista / Cuarteto",
+        "agrupaciones_propias": [
+            "Keith Jarrett Standards Trio",
+            "American Quartet",
+            "European Quartet"
+        ],
+        "colaboraciones_clave": [
+            "Miles Davis Group",
+            "Charles Lloyd Quartet",
+            "Gary Peacock & Jack DeJohnette"
+        ],
+        "albumes_fundamentales": [
+            "Solo-Concerts Bremen/Lousanne (1973)",
+            "The Köln Concert (1975)",
+            "My Song (1978)"
+        ],
+        "anio_inicio": 1962,
+        "anio_fin": null
+    },
+    {
+        "id": 19,
+        "nombre": "John McLaughlin",
+        "origen": "Reino Unido",
+        "corriente": [
+            "Jazz Fusion",
+            "Electric Jazz",
+            "World Fusion",
+            "Post-Bop"
+        ],
+        "instrumento": [
+            "Guitarra"
+        ],
+        "tipo_agrupacion": "Cuarteto / Trío / Solista",
+        "agrupaciones_propias": [
+            "Mahavishnu Orchestra",
+            "Shakti",
+            "The Free Spirits",
+            "The 4th Dimension"
+        ],
+        "colaboraciones_clave": [
+            "Miles Davis Group",
+            "The Guitar Trio (con Paco de Lucía y Al Di Meola)",
+            "Tony Williams Lifetime"
+        ],
+        "albumes_fundamentales": [
+            "Extrapolation (1969)",
+            "The Inner Mounting Flame - Mahavishnu Orchestra (1971)",
+            "Shakti with John McLaughlin (1976)"
+        ],
+        "anio_inicio": 1963,
+        "anio_fin": null
+    },
+    {
+        "id": 20,
+        "nombre": "Chick Corea",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Jazz Fusion",
+            "Post-Bop",
+            "Avant-Garde Jazz",
+            "Latin Jazz"
+        ],
+        "instrumento": [
+            "Piano",
+            "Teclados",
+            "Sintetizador"
+        ],
+        "tipo_agrupacion": "Trío / Cuarteto / Solista / Band",
+        "agrupaciones_propias": [
+            "Return to Forever",
+            "Chick Corea Elektric Band",
+            "Chick Corea Akoustic Band",
+            "Circle"
+        ],
+        "colaboraciones_clave": [
+            "Miles Davis Group",
+            "Stan Getz Quartet",
+            "Gary Burton",
+            "Herbie Hancock"
+        ],
+        "albumes_fundamentales": [
+            "Now He Sings, Now He Sobs (1968)",
+            "Light as a Feather - Return to Forever (1973)",
+            "Spain / Crystal Silence (con Gary Burton) (1972)"
+        ],
+        "anio_inicio": 1962,
+        "anio_fin": 2021
+    },
+    {
+        "id": 21,
+        "nombre": "Kenny Garrett",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Post-Bop",
+            "Modal Jazz",
+            "Hard Bop",
+            "Jazz Fusion"
+        ],
+        "instrumento": [
+            "Saxofón alto",
+            "Saxofón soprano"
+        ],
+        "tipo_agrupacion": "Quinteto / Cuarteto / Solista",
+        "agrupaciones_propias": [
+            "Kenny Garrett Quintet"
+        ],
+        "colaboraciones_clave": [
+            "Miles Davis Band",
+            "Duke Ellington Orchestra",
+            "Art Blakey & the Jazz Messengers",
+            "Chick Corea Freedom Band"
+        ],
+        "albumes_fundamentales": [
+            "Black Hope (1992)",
+            "Pursuance: The Music of John Coltrane (1996)",
+            "Songbook (1997)"
+        ],
+        "anio_inicio": 1978,
+        "anio_fin": null
+    },
+    {
+        "id": 22,
+        "nombre": "Eddie Palmieri",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Latin Jazz",
+            "Afro-Cuban Jazz",
+            "Salsa",
+            "Jazz Fusion"
+        ],
+        "instrumento": [
+            "Piano"
+        ],
+        "tipo_agrupacion": "Orquesta / Septeto / Solista",
+        "agrupaciones_propias": [
+            "Conjunto La Perfecta",
+            "Eddie Palmieri Latin Jazz Ensemble"
+        ],
+        "colaboraciones_clave": [
+            "Cal Tjader",
+            "Harlem River Drive",
+            "Tito Puente"
+        ],
+        "albumes_fundamentales": [
+            "Superimposition (1970)",
+            "The Sun of Latin Music (1974)",
+            "Palmas (1994)"
+        ],
+        "anio_inicio": 1955,
+        "anio_fin": null
+    },
+    {
+        "id": 23,
+        "nombre": "Jiro Inagaki",
+        "origen": "Japón",
+        "corriente": [
+            "Jazz Fusion",
+            "Jazz-Rock",
+            "Hard Bop",
+            "Funk Jazz"
+        ],
+        "instrumento": [
+            "Saxofón tenor",
+            "Saxofón alto"
+        ],
+        "tipo_agrupacion": "Septeto / Big Band",
+        "agrupaciones_propias": [
+            "Jiro Inagaki & Soul Media"
+        ],
+        "colaboraciones_clave": [
+            "Takeshi Inomata",
+            "Masahiko Sato",
+            "Terumasa Hino"
+        ],
+        "albumes_fundamentales": [
+            "Head Rock (1970)",
+            "Woodstock Generation (1970)",
+            "Funky Stuff (1975)"
+        ],
+        "anio_inicio": 1957,
+        "anio_fin": null
+    },
+    {
+        "id": 24,
+        "nombre": "Brad Mehldau",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Post-Bop",
+            "Contemporary Jazz",
+            "Modal Jazz"
+        ],
+        "instrumento": [
+            "Piano"
+        ],
+        "tipo_agrupacion": "Trío / Solista / Duo",
+        "agrupaciones_propias": [
+            "Brad Mehldau Trio"
+        ],
+        "colaboraciones_clave": [
+            "Joshua Redman Quartet",
+            "Pat Metheny",
+            "Anne Sofie von Otter",
+            "Mehliana (con Mark Guiliana)"
+        ],
+        "albumes_fundamentales": [
+            "The Art of the Trio, Vol. 3: Songs (1998)",
+            "Day is Done (2005)",
+            "Metheny/Mehldau (2006)"
+        ],
+        "anio_inicio": 1991,
+        "anio_fin": null
+    },
+    {
+        "id": 25,
+        "nombre": "Joey DeFrancesco",
+        "origen": "Estados Unidos",
+        "corriente": [
+            "Hard Bop",
+            "Soul Jazz",
+            "Mainstream Jazz"
+        ],
+        "instrumento": [
+            "Órgano Hammond",
+            "Trompeta",
+            "Saxofón tenor"
+        ],
+        "tipo_agrupacion": "Trío / Cuarteto / Solista",
+        "agrupaciones_propias": [
+            "Joey DeFrancesco Trio"
+        ],
+        "colaboraciones_clave": [
+            "Miles Davis Band",
+            "John McLaughlin (The Free Spirits)",
+            "Elvin Jones",
+            "Van Morrison"
+        ],
+        "albumes_fundamentales": [
+            "All of Me (1989)",
+            "Goodfellas (1999)",
+            "You're Driving Me Crazy (con Van Morrison) (2018)"
+        ],
+        "anio_inicio": 1988,
+        "anio_fin": 2022
+    },
+    {
+        "id": 26,
+        "nombre": "Papo Lucca",
+        "origen": "Puerto Rico",
+        "corriente": [
+            "Latin Jazz",
+            "Afro-Cuban Jazz",
+            "Salsa"
+        ],
+        "instrumento": [
+            "Piano"
+        ],
+        "tipo_agrupacion": "Orquesta / Solista",
+        "agrupaciones_propias": [
+            "La Sonora Ponceña"
+        ],
+        "colaboraciones_clave": [
+            "Fania All-Stars",
+            "Celia Cruz",
+            "Cheo Feliciano",
+            "Ismael Quintana"
+        ],
+        "albumes_fundamentales": [
+            "Latin Jazz (1993)",
+            "De Puerto Rico a New York - La Sonora Ponceña (1976)",
+            "Back to the Road - La Sonora Ponceña (1992)"
+        ],
+        "anio_inicio": 1954,
+        "anio_fin": null
+    },
+    {
+        "id": 29,
+        "nombre": "Chet Baker",
+        "origen": "Estados Unidos",
+        "corriente": ["Cool Jazz", "West Coast Jazz", "Bebop"],
+        "instrumento": ["Trompeta", "Voz"],
+        "tipo_agrupacion": "Cuarteto / Trío / Solista",
+        "agrupaciones_propias": ["Chet Baker Quartet", "Chet Baker Trio"],
+        "colaboraciones_clave": ["Gerry Mulligan Quartet", "Charlie Parker", "Stan Getz", "Gerry Mulligan"],
+        "albumes_fundamentales": ["Chet Baker Sings (1954)", "Chet (1959)", "The Last Great Concert (1988)"],
+        "anio_inicio": 1949,
+        "anio_fin": 1988
+    }
+]
