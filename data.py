@@ -367,6 +367,84 @@ CATALOGO_JAZZ = [
         "albumes_fundamentales": ["Latin Jazz (1993)", "De Puerto Rico a New York - La Sonora Ponceña (1976)", "Back to the Road - La Sonora Ponceña (1992)"],
         "anio_inicio": 1954,
         "anio_fin": None
+    },
+    {
+        "id": 27,
+        "nombre": "Richie Ray",
+        "origen": "Estados Unidos",
+        "corriente": ["Latin Jazz", "Afro-Cuban Jazz", "Salsa", "Boogaloo"],
+        "instrumento": ["Piano"],
+        "tipo_agrupacion": "Dúo / Orquesta",
+        "agrupaciones_propias": ["Richie Ray & Bobby Cruz Orchestra"],
+        "colaboraciones_clave": ["Fania All-Stars"],
+        "albumes_fundamentales": ["Jala Jala y Boogaloo (1967)", "El Bestial Sonido de Ricardo Ray y Bobby Cruz (1971)", "Reconstruct (1976)"],
+        "anio_inicio": 1963,
+        "anio_fin": None
+    },
+    {
+        "id": 28,
+        "nombre": "Bobby Cruz",
+        "origen": "Puerto Rico",
+        "corriente": ["Latin Jazz", "Afro-Cuban Jazz", "Salsa", "Boogaloo"],
+        "instrumento": ["Voz"],
+        "tipo_agrupacion": "Dúo / Orquesta",
+        "agrupaciones_propias": ["Richie Ray & Bobby Cruz Orchestra"],
+        "colaboraciones_clave": ["Fania All-Stars"],
+        "albumes_fundamentales": ["Jala Jala y Boogaloo (1967)", "El Bestial Sonido de Ricardo Ray y Bobby Cruz (1971)", "Jammin' Live (1999)"],
+        "anio_inicio": 1963,
+        "anio_fin": None
+    },
+    {
+        "id": 29,
+        "nombre": "Chet Baker",
+        "origen": "Estados Unidos",
+        "corriente": ["Cool Jazz", "West Coast Jazz", "Bebop"],
+        "instrumento": ["Trompeta", "Voz"],
+        "tipo_agrupacion": "Cuarteto / Trío / Solista",
+        "agrupaciones_propias": ["Chet Baker Quartet", "Chet Baker Trio"],
+        "colaboraciones_clave": ["Gerry Mulligan Quartet", "Charlie Parker", "Stan Getz", "Gerry Mulligan"],
+        "albumes_fundamentales": ["Chet Baker Sings (1954)", "Chet (1959)", "The Last Great Concert (1988)"],
+        "anio_inicio": 1949,
+        "anio_fin": 1988
+    },
+ {
+        "id": 30,
+        "nombre": "Charlie Haden",
+        "origen": "Estados Unidos",
+        "corriente": ["Free Jazz", "Avant-Garde Jazz", "Post-Bop", "Cool Jazz"],
+        "instrumento": ["Contrabajo"],
+        "tipo_agrupacion": "Cuarteto / Solista / Dúo",
+        "agrupaciones_propias": ["Liberation Music Orchestra", "Quartet West"],
+        "colaboraciones_clave": ["Ornette Coleman Quartet", "Keith Jarrett American Quartet", "Old and New Dreams", "Pat Metheny"],
+        "albumes_fundamentales": ["Liberation Music Orchestra (1969)", "Closeness (1976)", "Beyond the Missouri Sky (con Pat Metheny) (1997)"],
+        "anio_inicio": 1957,
+        "anio_fin": 2014
+    },
+    {
+        "id": 31,
+        "nombre": "Christian McBride",
+        "origen": "Estados Unidos",
+        "corriente": ["Hard Bop", "Post-Bop", "Contemporary Jazz", "Big Band"],
+        "instrumento": ["Contrabajo", "Bajo eléctrico"],
+        "tipo_agrupacion": "Trío / Quinteto / Big Band",
+        "agrupaciones_propias": ["Christian McBride Trio", "Christian McBride Big Band", "Inside Straight"],
+        "colaboraciones_clave": ["Freddie Hubbard", "Roy Hargrove", "Chick Corea Trilogy", "Diana Krall"],
+        "albumes_fundamentales": ["Gettin' to It (1995)", "The Good Feeling (2011)", "Bringin' It (2017)"],
+        "anio_inicio": 1989,
+        "anio_fin": None
+    },
+    {
+        "id": 32,
+        "nombre": "Steve Rodby",
+        "origen": "Estados Unidos",
+        "corriente": ["Jazz Fusion", "Contemporary Jazz", "Post-Bop"],
+        "instrumento": ["Bajo eléctrico", "Contrabajo"],
+        "tipo_agrupacion": "Cuarteto / Ensamble / Productor",
+        "agrupaciones_propias": [],
+        "colaboraciones_clave": ["Pat Metheny Group", "Lyle Mays", "Fred Simon", "Paul Wertico"],
+        "albumes_fundamentales": ["First Circle - Pat Metheny Group (1984)", "Letter from Home - Pat Metheny Group (1989)", "The Way Up - Pat Metheny Group (2005)"],
+        "anio_inicio": 1977,
+        "anio_fin": None
     }
 
 ]
