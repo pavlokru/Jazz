@@ -445,7 +445,29 @@ CATALOGO_JAZZ = [
         "albumes_fundamentales": ["First Circle - Pat Metheny Group (1984)", "Letter from Home - Pat Metheny Group (1989)", "The Way Up - Pat Metheny Group (2005)"],
         "anio_inicio": 1977,
         "anio_fin": None
-    }
+    },
+    {
+    "id": 33,
+    "nombre": "Pedro Aznar",
+    "origen": "Argentina",
+    "corriente": ["Jazz Fusion", "World Fusion", "Contemporary Jazz"],
+    "instrumento": ["Bajo eléctrico", "Contrabajo", "Voz", "Teclados", "Guitarra"],
+    "tipo_agrupacion": "Solista / Cuarteto / Quinteto",
+    "agrupaciones_propias": ["Pedro Aznar Banda"],
+    "colaboraciones_clave": [
+        "Pat Metheny Group",
+        "Serú Girán",
+        "Spinetta Jade",
+        "Lyle Mays"
+    ],
+    "albumes_fundamentales": [
+        "Pedro Aznar (1982)",
+        "Contemplación (1998)",
+        "First Circle - Pat Metheny Group (1984)"
+    ],
+    "anio_inicio": 1978,
+    "anio_fin": None
+}
 
 ]
 
