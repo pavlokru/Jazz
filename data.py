@@ -467,6 +467,29 @@ CATALOGO_JAZZ = [
     ],
     "anio_inicio": 1978,
     "anio_fin": None
+},
+{
+    "id": 34,
+    "nombre": "Don Grolnick",
+    "origen": "Estados Unidos",
+    "corriente": ["Jazz Fusion", "Post-Bop", "Hard Bop", "Contemporary Jazz"],
+    "instrumento": ["Piano", "Teclados", "Sintetizador"],
+    "tipo_agrupacion": "Quinteto / Sexteto / Solista / Productor",
+    "agrupaciones_propias": ["Don Grolnick Group"],
+    "colaboraciones_clave": [
+        "Steps Ahead",
+        "Brecker Brothers",
+        "Michael Brecker Band",
+        "James Taylor Band",
+        "Marcus Miller"
+    ],
+    "albumes_fundamentales": [
+        "Hearts and Numbers (1985)",
+        "Nighttown (1992)",
+        "The London Concert (2000)"
+    ],
+    "anio_inicio": 1969,
+    "anio_fin": 1996
 }
 
 ]

@@ -1,10 +1,10 @@
 """
-Módulo CLI: Interfaz optimizada para pantallas verticales de celular (Ancho max: 38 cols).
+Módulo CLI: Interfaz colorida optimizada para formato vertical (máximo 38 cols de ancho).
 """
 
 from core import CatalogEngine
 
-# Códigos ANSI para formato y color
+# Códigos ANSI de color
 RESET = "\033[0m"
 BOLD = "\033[1m"
 CYAN = "\033[96m"
@@ -17,7 +17,7 @@ DIM = "\033[2m"
 
 
 class CatalogCLI:
-    """Maneja la presentación visual ajustada a formato vertical móvil."""
+    """Maneja la presentación visual ajustada a pantalla pequeña/móvil."""
 
     def __init__(self, engine: CatalogEngine):
         self.engine = engine
@@ -27,9 +27,7 @@ class CatalogCLI:
 
     def mostrar_menu(self):
         print(f"\n{CYAN}┌────────────────────────────────────┐{RESET}")
-        print(
-            f"{CYAN}│{BOLD}{MAGENTA}        🎷 JAZZ CATALOG CLI         {RESET}{CYAN}│{RESET}"
-        )
+        print(f"{CYAN}│{BOLD}{MAGENTA}        🎷 JAZZ CATALOG CLI         {RESET}{CYAN}│{RESET}")
         print(f"{CYAN}└────────────────────────────────────┘{RESET}")
         print(f" {GREEN}[1]{RESET} {BOLD}Ver catálogo{RESET}")
         print(f" {GREEN}[2]{RESET} {BOLD}Buscar artista / estilo{RESET}")
@@ -39,26 +37,16 @@ class CatalogCLI:
         self._separador()
 
     def mostrar_tarjetas(self, items: list[dict]):
-        """Muestra los resultados en formato de lista/tarjetas verticales compactas."""
+        """Presentación en tarjetas verticales compactas."""
         if not items:
             print(f"{RED}⚠️  Sin resultados.{RESET}\n")
             return
 
         for item in items:
-            inst_str = (
-                ", ".join(item.get("instrumento", []))
-                if isinstance(item.get("instrumento"), list)
-                else str(item.get("instrumento", ""))
-            )
-            corr_str = (
-                ", ".join(item.get("corriente", []))
-                if isinstance(item.get("corriente"), list)
-                else str(item.get("corriente", ""))
-            )
+            inst_str = ", ".join(item.get("instrumento", [])) if isinstance(item.get("instrumento"), list) else str(item.get("instrumento", ""))
+            corr_str = ", ".join(item.get("corriente", [])) if isinstance(item.get("corriente"), list) else str(item.get("corriente", ""))
 
-            print(
-                f"{YELLOW}#{item['id']}{RESET} | {BOLD}{CYAN}{item['nombre'][:28]}{RESET}"
-            )
+            print(f"{YELLOW}#{item['id']}{RESET} | {BOLD}{CYAN}{item['nombre'][:28]}{RESET}")
             print(f"   {BLUE}Origen:{RESET} {item.get('origen', 'N/A')}")
             print(f"   {GREEN}Inst:{RESET} {inst_str[:28]}")
             print(f"   {MAGENTA}Estilo:{RESET} {corr_str[:26]}")
@@ -68,32 +56,20 @@ class CatalogCLI:
 
     def mostrar_ficha(self, item: dict):
         """Ficha detallada adaptada a 38 columnas de ancho."""
-        fin_str = str(item["anio_fin"]) if item.get("anio_fin") else "Presente"
+        fin_str = str(item['anio_fin']) if item.get('anio_fin') else "Presente"
         actividad = f"{item.get('anio_inicio', 'N/A')} - {fin_str}"
-        inst_str = (
-            ", ".join(item.get("instrumento", []))
-            if isinstance(item.get("instrumento"), list)
-            else str(item.get("instrumento", ""))
-        )
-        corr_str = (
-            ", ".join(item.get("corriente", []))
-            if isinstance(item.get("corriente"), list)
-            else str(item.get("corriente", ""))
-        )
+        inst_str = ", ".join(item.get("instrumento", [])) if isinstance(item.get("instrumento"), list) else str(item.get("instrumento", ""))
+        corr_str = ", ".join(item.get("corriente", [])) if isinstance(item.get("corriente"), list) else str(item.get("corriente", ""))
 
         print(f"\n{CYAN}┌────────────────────────────────────┐{RESET}")
-        print(
-            f"{CYAN}│{RESET} {BOLD}{MAGENTA}FICHA #{item['id']} - {item['nombre'][:21].upper():<21}{RESET} {CYAN}│{RESET}"
-        )
+        print(f"{CYAN}│{RESET} {BOLD}{MAGENTA}FICHA #{item['id']} - {item['nombre'][:21].upper():<21}{RESET} {CYAN}│{RESET}")
         print(f"{CYAN}└────────────────────────────────────┘{RESET}")
         print(f" {BLUE}• Nombre:{RESET} {BOLD}{item['nombre']}{RESET}")
         print(f" {BLUE}• Origen:{RESET} {item.get('origen', 'N/A')}")
         print(f" {BLUE}• Período:{RESET} {YELLOW}{actividad}{RESET}")
         print(f" {BLUE}• Instrumento(s):{RESET}\n   {GREEN}{inst_str}{RESET}")
         print(f" {BLUE}• Corriente(s):{RESET}\n   {MAGENTA}{corr_str}{RESET}")
-        print(
-            f" {BLUE}• Tipo Agrupación:{RESET}\n   {item.get('tipo_agrupacion', 'N/A')}"
-        )
+        print(f" {BLUE}• Tipo Agrupación:{RESET}\n   {item.get('tipo_agrupacion', 'N/A')}")
 
         print(f"\n {BOLD}{CYAN}👥 Agrupaciones:{RESET}")
         for g in item.get("agrupaciones_propias", []):
@@ -106,6 +82,10 @@ class CatalogCLI:
         print(f"\n {BOLD}{CYAN}💿 Álbumes Clave:{RESET}")
         for alb in item.get("albumes_fundamentales", []):
             print(f"   - {alb}")
+
+        if item.get("nota"):
+            print(f"\n {BOLD}{YELLOW}📝 Nota Anexa:{RESET}")
+            print(f"   {item['nota']}")
 
         self._separador()
 
@@ -132,6 +112,12 @@ class CatalogCLI:
                     item = self.engine.obtener_por_id(art_id)
                     if item:
                         self.mostrar_ficha(item)
+                        sub_opcion = input(f"{BOLD}¿Desea agregar o reescribir nota? (s/n): {RESET}").strip().lower()
+                        if sub_opcion == "s":
+                            nota = input(f"{BOLD}Nota: {RESET}").strip()
+                            if nota:
+                                self.engine.agregar_nota(art_id, nota)
+                                print(f"{GREEN}✓ Nota guardada en la ficha del artista.{RESET}\n")
                     else:
                         print(f"{RED}⚠️ ID #{art_id} no encontrado.{RESET}\n")
                 except ValueError:
@@ -151,19 +137,13 @@ class CatalogCLI:
                 tipo_agrupacion = input(f"{BOLD}Tipo Agrupación: {RESET}").strip()
 
                 agr_raw = input(f"{BOLD}Agrup. Propias (sep por coma): {RESET}").strip()
-                agrupaciones_propias = [
-                    a.strip() for a in agr_raw.split(",") if a.strip()
-                ]
+                agrupaciones_propias = [a.strip() for a in agr_raw.split(",") if a.strip()]
 
                 col_raw = input(f"{BOLD}Colaboraciones (sep por coma): {RESET}").strip()
-                colaboraciones_clave = [
-                    c.strip() for c in col_raw.split(",") if c.strip()
-                ]
+                colaboraciones_clave = [c.strip() for c in col_raw.split(",") if c.strip()]
 
                 alb_raw = input(f"{BOLD}Álbumes (sep por coma): {RESET}").strip()
-                albumes_fundamentales = [
-                    a.strip() for a in alb_raw.split(",") if a.strip()
-                ]
+                albumes_fundamentales = [a.strip() for a in alb_raw.split(",") if a.strip()]
 
                 try:
                     inicio_in = input(f"{BOLD}Año inicio: {RESET}").strip()
@@ -188,9 +168,7 @@ class CatalogCLI:
                         anio_inicio=anio_inicio,
                         anio_fin=anio_fin,
                     )
-                    print(
-                        f"\n{GREEN}💾 ¡{nuevo_item['nombre']} guardado con ID #{nuevo_item['id']}!{RESET}\n"
-                    )
+                    print(f"\n{GREEN}💾 ¡{nuevo_item['nombre']} guardado con ID #{nuevo_item['id']}!{RESET}\n")
                 else:
                     print(f"\n{RED}⚠️ El nombre no puede estar vacío.{RESET}\n")
 

@@ -2,6 +2,16 @@
 Punto de Entrada: Instancia el motor con el catálogo de data.py y lanza la interfaz CLI.
 """
 
+import sys
+
+# Activa la navegación con flechas en la consola para sistemas POSIX (Linux/Android/macOS)
+try:
+    import readline
+except ImportError:
+    pass  # En Windows readline no existe por defecto, pero tampoco suele necesitarlo
+
+
+
 from data import CATALOGO_JAZZ
 from core import CatalogEngine
 from cli import CatalogCLI
