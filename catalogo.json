@@ -840,7 +840,8 @@
             "Jammin' Live (1999)"
         ],
         "anio_inicio": 1963,
-        "anio_fin": null
+        "anio_fin": null,
+        "nota": "Algunos temas son cristianos"
     },
     {
         "id": 29,
@@ -1036,6 +1037,77 @@
             "The London Concert (2000)"
         ],
         "anio_inicio": 1969,
-        "anio_fin": 1996
+        "anio_fin": 1996,
+        "nota": "excelente album Hearts and Numbers\""
+    },
+    {
+        "id": 35,
+        "nombre": "Anouar Brahem",
+        "origen": "Túnez",
+        "corriente": [
+            "Ethno Jazz",
+            "Arabic Jazz",
+            "World Fusion",
+            "Third Stream"
+        ],
+        "instrumento": [
+            "Oud"
+        ],
+        "tipo_agrupacion": "Cuarteto / Trío / Solista",
+        "agrupaciones_propias": [
+            "Anouar Brahem Quartet",
+            "Anouar Brahem Trio"
+        ],
+        "colaboraciones_clave": [
+            "Dave Holland",
+            "John Surman",
+            "Jan Garbarek",
+            "Jack DeJohnette",
+            "Richard Galliano"
+        ],
+        "albumes_fundamentales": [
+            "Thimar (1998)",
+            "Le Pas du Chat Noir (2002)",
+            "Blue Maqams (2017)"
+        ],
+        "anio_inicio": 1981,
+        "anio_fin": null,
+        "nota": "excelentes Thimar y Blue maqams\n   • revisar colaboraciones"
+    },
+    {
+        "id": 36,
+        "nombre": "John Surman",
+        "origen": "Reino Unido",
+        "corriente": [
+            "Free Jazz",
+            "Avant-Garde Jazz",
+            "Modal Jazz",
+            "Third Stream"
+        ],
+        "instrumento": [
+            "Saxofón barítono",
+            "Saxofón soprano",
+            "Clarinete bajo",
+            "Sintetizador"
+        ],
+        "tipo_agrupacion": "Solista / Trío / Cuarteto",
+        "agrupaciones_propias": [
+            "John Surman Trio",
+            "The Trio"
+        ],
+        "colaboraciones_clave": [
+            "Anouar Brahem",
+            "Dave Holland",
+            "John McLaughlin",
+            "Jack DeJohnette",
+            "Karin Krog"
+        ],
+        "albumes_fundamentales": [
+            "Upon Reflection (1979)",
+            "The Road to Saint Ives (1990)",
+            "Thimar (con Anouar Brahem y Dave Holland) (1998)"
+        ],
+        "anio_inicio": 1966,
+        "anio_fin": null
     }
 ]

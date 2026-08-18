@@ -1,46 +1,48 @@
 """
-Módulo Core: Lógica de negocio, búsqueda profunda y fusión automática entre data.py y catalogo.json.
+Módulo Core: Lógica de negocio, búsqueda profunda y fusión automática
+entre data.py y catalogo.json.
 """
 
 import json
 import os
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 
 class CatalogEngine:
     """Motor de búsqueda, persistencia y sincronización de registros."""
 
-    def __init__(self, archivo_json: str = "catalogo.json", datos_iniciales: Optional[List[Dict]] = None):
+    def __init__(
+        self,
+        archivo_json: str = "catalogo.json",
+        datos_iniciales: Optional[List[Dict]] = None,
+    ):
         self.archivo_json = archivo_json
         self.items = self._cargar_datos(datos_iniciales)
 
-    def _cargar_datos(self, datos_iniciales: Optional[List[Dict]] = None) -> List[Dict]:
+    def _cargar_datos(
+        self, datos_iniciales: Optional[List[Dict]] = None
+    ) -> List[Dict]:
         """Carga los datos del JSON y fusiona por ID con registros nuevos en data.py."""
         datos_iniciales = datos_iniciales or []
 
-        # 1. Si no existe el JSON, se genera con la semilla inicial
         if not os.path.exists(self.archivo_json):
             self._guardar_en_disco(datos_iniciales)
             return datos_iniciales
 
-        # 2. Si existe, se lee el JSON actual
         try:
             with open(self.archivo_json, "r", encoding="utf-8") as f:
                 items_json = json.load(f)
         except (json.JSONDecodeError, OSError):
             items_json = []
 
-        # 3. Mapeo de IDs para evitar duplicar
         ids_existentes = {item["id"] for item in items_json if "id" in item}
 
-        # 4. Fusión de nuevos registros añadidos en data.py
         hubo_cambios = False
         for artista in datos_iniciales:
             if artista.get("id") not in ids_existentes:
                 items_json.append(artista)
                 hubo_cambios = True
 
-        # 5. Guardado si hubo actualizaciones
         if hubo_cambios:
             items_json.sort(key=lambda x: x.get("id", 0))
             self._guardar_en_disco(items_json)
@@ -57,7 +59,7 @@ class CatalogEngine:
         return self.items
 
     def buscar(self, criterio: str) -> List[Dict]:
-        """Búsqueda plana recursiva en cualquier campo (cadena, lista, entero)."""
+        """Búsqueda plana en cualquier campo (cadena, lista, entero)."""
         criterio_norm = criterio.strip().lower()
         if not criterio_norm:
             return self.items
@@ -82,11 +84,17 @@ class CatalogEngine:
                 return item
         return None
 
-    def agregar_nota(self, item_id: int, nota: str) -> bool:
-        """Agrega o actualiza una nota anexa a un artista existente."""
+    def agregar_nota(self, item_id: int, nueva_nota: str) -> bool:
+        """Agrega una nota anexa acumulándola al historial de notas del registro."""
         item = self.obtener_por_id(item_id)
         if item:
-            item["nota"] = nota
+            nota_actual = item.get("nota")
+            if nota_actual:
+                # Concatena la nueva nota debajo de la existente
+                item["nota"] = f"{nota_actual}\n   • {nueva_nota}"
+            else:
+                item["nota"] = f"• {nueva_nota}"
+
             self._guardar_en_disco()
             return True
         return False
@@ -122,3 +130,4 @@ class CatalogEngine:
         self.items.append(nuevo_item)
         self._guardar_en_disco()
         return nuevo_item
+

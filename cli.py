@@ -43,8 +43,16 @@ class CatalogCLI:
             return
 
         for item in items:
-            inst_str = ", ".join(item.get("instrumento", [])) if isinstance(item.get("instrumento"), list) else str(item.get("instrumento", ""))
-            corr_str = ", ".join(item.get("corriente", [])) if isinstance(item.get("corriente"), list) else str(item.get("corriente", ""))
+            inst_str = (
+                ", ".join(item.get("instrumento", []))
+                if isinstance(item.get("instrumento"), list)
+                else str(item.get("instrumento", ""))
+            )
+            corr_str = (
+                ", ".join(item.get("corriente", []))
+                if isinstance(item.get("corriente"), list)
+                else str(item.get("corriente", ""))
+            )
 
             print(f"{YELLOW}#{item['id']}{RESET} | {BOLD}{CYAN}{item['nombre'][:28]}{RESET}")
             print(f"   {BLUE}Origen:{RESET} {item.get('origen', 'N/A')}")
@@ -56,10 +64,18 @@ class CatalogCLI:
 
     def mostrar_ficha(self, item: dict):
         """Ficha detallada adaptada a 38 columnas de ancho."""
-        fin_str = str(item['anio_fin']) if item.get('anio_fin') else "Presente"
+        fin_str = str(item["anio_fin"]) if item.get("anio_fin") else "Presente"
         actividad = f"{item.get('anio_inicio', 'N/A')} - {fin_str}"
-        inst_str = ", ".join(item.get("instrumento", [])) if isinstance(item.get("instrumento"), list) else str(item.get("instrumento", ""))
-        corr_str = ", ".join(item.get("corriente", [])) if isinstance(item.get("corriente"), list) else str(item.get("corriente", ""))
+        inst_str = (
+            ", ".join(item.get("instrumento", []))
+            if isinstance(item.get("instrumento"), list)
+            else str(item.get("instrumento", ""))
+        )
+        corr_str = (
+            ", ".join(item.get("corriente", []))
+            if isinstance(item.get("corriente"), list)
+            else str(item.get("corriente", ""))
+        )
 
         print(f"\n{CYAN}┌────────────────────────────────────┐{RESET}")
         print(f"{CYAN}│{RESET} {BOLD}{MAGENTA}FICHA #{item['id']} - {item['nombre'][:21].upper():<21}{RESET} {CYAN}│{RESET}")
@@ -79,12 +95,12 @@ class CatalogCLI:
         for c in item.get("colaboraciones_clave", []):
             print(f"   - {c}")
 
-        print(f"\n {BOLD}{CYAN}💿 Álbumes Clave:{RESET}")
+        print(f"\n {BOLD}{CYAN}CD Álbumes Clave:{RESET}")
         for alb in item.get("albumes_fundamentales", []):
             print(f"   - {alb}")
 
         if item.get("nota"):
-            print(f"\n {BOLD}{YELLOW}📝 Nota Anexa:{RESET}")
+            print(f"\n {BOLD}{YELLOW}📝 Notas Anexas:{RESET}")
             print(f"   {item['nota']}")
 
         self._separador()
@@ -108,16 +124,24 @@ class CatalogCLI:
 
             elif opcion == "3":
                 try:
-                    art_id = int(input(f"\n{BOLD}ID de artista: {RESET}").strip())
+                    art_id = int(input(f"\n{BOLD}ID del registro: {RESET}").strip())
                     item = self.engine.obtener_por_id(art_id)
                     if item:
                         self.mostrar_ficha(item)
-                        sub_opcion = input(f"{BOLD}¿Desea agregar o reescribir nota? (s/n): {RESET}").strip().lower()
+                        sub_opcion = (
+                            input(
+                                f"{BOLD}¿Desea agregar una nueva nota anexa? (s/n): {RESET}"
+                            )
+                            .strip()
+                            .lower()
+                        )
                         if sub_opcion == "s":
-                            nota = input(f"{BOLD}Nota: {RESET}").strip()
+                            nota = input(f"{BOLD}Nota a anexar: {RESET}").strip()
                             if nota:
                                 self.engine.agregar_nota(art_id, nota)
-                                print(f"{GREEN}✓ Nota guardada en la ficha del artista.{RESET}\n")
+                                print(
+                                    f"{GREEN}✓ Nueva nota anexada con éxito.{RESET}\n"
+                                )
                     else:
                         print(f"{RED}⚠️ ID #{art_id} no encontrado.{RESET}\n")
                 except ValueError:
@@ -137,13 +161,19 @@ class CatalogCLI:
                 tipo_agrupacion = input(f"{BOLD}Tipo Agrupación: {RESET}").strip()
 
                 agr_raw = input(f"{BOLD}Agrup. Propias (sep por coma): {RESET}").strip()
-                agrupaciones_propias = [a.strip() for a in agr_raw.split(",") if a.strip()]
+                agrupaciones_propias = [
+                    a.strip() for a in agr_raw.split(",") if a.strip()
+                ]
 
                 col_raw = input(f"{BOLD}Colaboraciones (sep por coma): {RESET}").strip()
-                colaboraciones_clave = [c.strip() for c in col_raw.split(",") if c.strip()]
+                colaboraciones_clave = [
+                    c.strip() for c in col_raw.split(",") if c.strip()
+                ]
 
                 alb_raw = input(f"{BOLD}Álbumes (sep por coma): {RESET}").strip()
-                albumes_fundamentales = [a.strip() for a in alb_raw.split(",") if a.strip()]
+                albumes_fundamentales = [
+                    a.strip() for a in alb_raw.split(",") if a.strip()
+                ]
 
                 try:
                     inicio_in = input(f"{BOLD}Año inicio: {RESET}").strip()
@@ -168,7 +198,9 @@ class CatalogCLI:
                         anio_inicio=anio_inicio,
                         anio_fin=anio_fin,
                     )
-                    print(f"\n{GREEN}💾 ¡{nuevo_item['nombre']} guardado con ID #{nuevo_item['id']}!{RESET}\n")
+                    print(
+                        f"\n{GREEN}💾 ¡{nuevo_item['nombre']} guardado con ID #{nuevo_item['id']}!{RESET}\n"
+                    )
                 else:
                     print(f"\n{RED}⚠️ El nombre no puede estar vacío.{RESET}\n")
 
@@ -177,3 +209,4 @@ class CatalogCLI:
                 break
             else:
                 print(f"{RED}⚠️ Opción inválida.{RESET}\n")
+
