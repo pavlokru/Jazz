@@ -1,133 +1,151 @@
-"""
-Módulo Core: Lógica de negocio, búsqueda profunda y fusión automática
-entre data.py y catalogo.json.
-"""
-
+import sqlite3
 import json
 import os
 from typing import Dict, List, Optional
 
-
 class CatalogEngine:
-    """Motor de búsqueda, persistencia y sincronización de registros."""
+    """Motor de persistencia SQLite optimizado para bajo footprint de RAM en ARM64."""
 
     def __init__(
         self,
-        archivo_json: str = "catalogo.json",
+        db_path: str = "data/catalogo.db",
         datos_iniciales: Optional[List[Dict]] = None,
     ):
-        self.archivo_json = archivo_json
-        self.items = self._cargar_datos(datos_iniciales)
+        self.db_path = db_path
+        self._preparar_entorno()
+        self._inicializar_db()
+        if datos_iniciales:
+            self._sincronizar_datos_iniciales(datos_iniciales)
 
-    def _cargar_datos(
-        self, datos_iniciales: Optional[List[Dict]] = None
-    ) -> List[Dict]:
-        """Carga los datos del JSON y fusiona por ID con registros nuevos en data.py."""
-        datos_iniciales = datos_iniciales or []
+    def _preparar_entorno(self):
+        """Asegura la existencia del directorio base para evitar errores de I/O."""
+        directorio = os.path.dirname(self.db_path)
+        if directorio and not os.path.exists(directorio):
+            os.makedirs(directorio, exist_ok=True)
 
-        if not os.path.exists(self.archivo_json):
-            self._guardar_en_disco(datos_iniciales)
-            return datos_iniciales
+    def _conectar(self):
+        """Conexión efímera. Permite al OS liberar recursos cuando no hay consultas."""
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
 
-        try:
-            with open(self.archivo_json, "r", encoding="utf-8") as f:
-                items_json = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            items_json = []
+    def _inicializar_db(self):
+        with self._conectar() as conn:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS artistas (
+                    id INTEGER PRIMARY KEY,
+                    nombre TEXT NOT NULL,
+                    origen TEXT,
+                    corriente TEXT,
+                    instrumento TEXT,
+                    tipo_agrupacion TEXT,
+                    agrupaciones_propias TEXT,
+                    colaboraciones_clave TEXT,
+                    albumes_fundamentales TEXT,
+                    anio_inicio INTEGER,
+                    anio_fin INTEGER,
+                    nota TEXT
+                )
+            """)
 
-        ids_existentes = {item["id"] for item in items_json if "id" in item}
+    def _sincronizar_datos_iniciales(self, datos: List[Dict]):
+        """Carga en bloque sin sobreescribir IDs existentes (Evita O(N^2) en RAM)."""
+        with self._conectar() as conn:
+            for item in datos:
+                cursor = conn.execute("SELECT id FROM artistas WHERE id = ?", (item["id"],))
+                if not cursor.fetchone():
+                    self._insertar_registro(conn, item)
 
-        hubo_cambios = False
-        for artista in datos_iniciales:
-            if artista.get("id") not in ids_existentes:
-                items_json.append(artista)
-                hubo_cambios = True
+    def _insertar_registro(self, conn, item: Dict):
+        conn.execute("""
+            INSERT INTO artistas (
+                id, nombre, origen, corriente, instrumento, tipo_agrupacion,
+                agrupaciones_propias, colaboraciones_clave, albumes_fundamentales,
+                anio_inicio, anio_fin, nota
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            item.get("id"),
+            item.get("nombre"),
+            item.get("origen"),
+            json.dumps(item.get("corriente", [])),
+            json.dumps(item.get("instrumento", [])),
+            item.get("tipo_agrupacion"),
+            json.dumps(item.get("agrupaciones_propias", [])),
+            json.dumps(item.get("colaboraciones_clave", [])),
+            json.dumps(item.get("albumes_fundamentales", [])),
+            item.get("anio_inicio"),
+            item.get("anio_fin"),
+            item.get("nota")
+        ))
 
-        if hubo_cambios:
-            items_json.sort(key=lambda x: x.get("id", 0))
-            self._guardar_en_disco(items_json)
-
-        return items_json
-
-    def _guardar_en_disco(self, items: Optional[List[Dict]] = None):
-        """Escribe el estado actual del catálogo en el archivo JSON."""
-        datos_a_guardar = items if items is not None else self.items
-        with open(self.archivo_json, "w", encoding="utf-8") as f:
-            json.dump(datos_a_guardar, f, ensure_ascii=False, indent=4)
+    def _fila_a_dict(self, fila) -> Dict:
+        """Hidrata los campos JSON bajo demanda."""
+        d = dict(fila)
+        campos_lista = ["corriente", "instrumento", "agrupaciones_propias", "colaboraciones_clave", "albumes_fundamentales"]
+        for campo in campos_lista:
+            d[campo] = json.loads(d[campo]) if d.get(campo) else []
+        return d
 
     def obtener_todos(self) -> List[Dict]:
-        return self.items
+        with self._conectar() as conn:
+            filas = conn.execute("SELECT * FROM artistas ORDER BY id ASC").fetchall()
+            return [self._fila_a_dict(f) for f in filas]
 
     def buscar(self, criterio: str) -> List[Dict]:
-        """Búsqueda plana en cualquier campo (cadena, lista, entero)."""
         criterio_norm = criterio.strip().lower()
         if not criterio_norm:
-            return self.items
+            return self.obtener_todos()
 
-        resultados = []
-        for item in self.items:
-            buffer_texto = []
-            for val in item.values():
-                if isinstance(val, list):
-                    buffer_texto.append(" ".join(str(v) for v in val))
-                elif val is not None:
-                    buffer_texto.append(str(val))
-
-            texto_completo = " ".join(buffer_texto).lower()
-            if criterio_norm in texto_completo:
-                resultados.append(item)
-        return resultados
+        # Búsqueda Full-Text rudimentaria por ahora.
+        # En la Fase 2, esto será reemplazado por embeddings vectoriales.
+        query = f"%{criterio_norm}%"
+        with self._conectar() as conn:
+            filas = conn.execute("""
+                SELECT * FROM artistas 
+                WHERE LOWER(nombre) LIKE ? 
+                   OR LOWER(origen) LIKE ? 
+                   OR LOWER(corriente) LIKE ? 
+                   OR LOWER(instrumento) LIKE ?
+            """, (query, query, query, query)).fetchall()
+            return [self._fila_a_dict(f) for f in filas]
 
     def obtener_por_id(self, item_id: int) -> Optional[Dict]:
-        for item in self.items:
-            if item.get("id") == item_id:
-                return item
-        return None
+        with self._conectar() as conn:
+            fila = conn.execute("SELECT * FROM artistas WHERE id = ?", (item_id,)).fetchone()
+            return self._fila_a_dict(fila) if fila else None
 
     def agregar_nota(self, item_id: int, nueva_nota: str) -> bool:
-        """Agrega una nota anexa acumulándola al historial de notas del registro."""
-        item = self.obtener_por_id(item_id)
-        if item:
-            nota_actual = item.get("nota")
-            if nota_actual:
-                # Concatena la nueva nota debajo de la existente
-                item["nota"] = f"{nota_actual}\n   • {nueva_nota}"
-            else:
-                item["nota"] = f"• {nueva_nota}"
-
-            self._guardar_en_disco()
+        with self._conectar() as conn:
+            fila = conn.execute("SELECT nota FROM artistas WHERE id = ?", (item_id,)).fetchone()
+            if not fila:
+                return False
+            
+            nota_actual = fila["nota"]
+            nota_final = f"{nota_actual}\n   • {nueva_nota}" if nota_actual else f"• {nueva_nota}"
+            
+            conn.execute("UPDATE artistas SET nota = ? WHERE id = ?", (nota_final, item_id))
             return True
-        return False
 
-    def agregar_item(
-        self,
-        nombre: str,
-        origen: str,
-        corriente: List[str],
-        instrumento: List[str],
-        tipo_agrupacion: str,
-        agrupaciones_propias: List[str],
-        colaboraciones_clave: List[str],
-        albumes_fundamentales: List[str],
-        anio_inicio: Optional[int],
-        anio_fin: Optional[int],
-    ) -> Dict:
-        """Inserta un nuevo registro asignando ID incremental y guardando en JSON."""
-        nuevo_id = max([item["id"] for item in self.items], default=0) + 1
-        nuevo_item = {
-            "id": nuevo_id,
-            "nombre": nombre,
-            "origen": origen,
-            "corriente": corriente,
-            "instrumento": instrumento,
-            "tipo_agrupacion": tipo_agrupacion,
-            "agrupaciones_propias": agrupaciones_propias,
-            "colaboraciones_clave": colaboraciones_clave,
-            "albumes_fundamentales": albumes_fundamentales,
-            "anio_inicio": anio_inicio,
-            "anio_fin": anio_fin,
-        }
-        self.items.append(nuevo_item)
-        self._guardar_en_disco()
-        return nuevo_item
+    def agregar_item(self, nombre: str, origen: str, corriente: List[str], instrumento: List[str], tipo_agrupacion: str, agrupaciones_propias: List[str], colaboraciones_clave: List[str], albumes_fundamentales: List[str], anio_inicio: Optional[int], anio_fin: Optional[int]) -> Dict:
+        with self._conectar() as conn:
+            cursor = conn.execute("SELECT MAX(id) FROM artistas")
+            max_id = cursor.fetchone()[0]
+            nuevo_id = (max_id or 0) + 1
+
+            nuevo_item = {
+                "id": nuevo_id,
+                "nombre": nombre,
+                "origen": origen,
+                "corriente": corriente,
+                "instrumento": instrumento,
+                "tipo_agrupacion": tipo_agrupacion,
+                "agrupaciones_propias": agrupaciones_propias,
+                "colaboraciones_clave": colaboraciones_clave,
+                "albumes_fundamentales": albumes_fundamentales,
+                "anio_inicio": anio_inicio,
+                "anio_fin": anio_fin,
+                "nota": None
+            }
+            self._insertar_registro(conn, nuevo_item)
+            return nuevo_item
 

@@ -18,7 +18,8 @@ from cli import CatalogCLI
 
 
 def main():
-    engine = CatalogEngine(archivo_json="catalogo.json", datos_iniciales=CATALOGO_JAZZ)
+    # Eliminamos archivo_json. Redirigimos a SQLite en la carpeta data/
+    engine = CatalogEngine(db_path="data/catalogo.db", datos_iniciales=CATALOGO_JAZZ)
     app = CatalogCLI(engine)
     app.ejecutar()
 
