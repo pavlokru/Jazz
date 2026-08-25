@@ -536,7 +536,29 @@ CATALOGO_JAZZ = [
     ],
     "anio_inicio": 1966,
     "anio_fin": None
+},
+{
+    "id": 37,
+    "nombre": "Laurent Erdos",
+    "origen": "Francia",
+    "corriente": ["Latin Jazz", "Afro-Cuban Jazz", "Salsa", "Jazz Fusion"],
+    "instrumento": ["Vibráfono", "Percusión"],
+    "tipo_agrupacion": "Septeto / Quinteto / Solista",
+    "agrupaciones_propias": ["Laurent Erdos & His Vibraphone", "Salsa Mambo/Latin Jazz Ensemble"],
+    "colaboraciones_clave": [
+        "Mambo Mania",
+        "Orlando Puntilla Ríos",
+        "Orquesta Tentación",
+        "Fiesta Cubana"
+    ],
+    "albumes_fundamentales": [
+        "Laurent Erdos & Friends (2002)",
+        "Vibes en Salsa (2008)"
+    ],
+    "anio_inicio": 1988,
+    "anio_fin": None
 }
+
 
 ]
 
