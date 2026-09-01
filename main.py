@@ -1,30 +1,24 @@
 import sys
 
-# Activa la navegación con flechas en la consola para sistemas POSIX (Linux/Android/macOS)
+# Mejora la navegación de la terminal si está disponible
 try:
     import readline
 except ImportError:
     pass 
 
-from data import CATALOGO_JAZZ
-from core import CatalogEngine
-from cli import CatalogCLI
+from cli import CatalogCLI, CatalogAPIClient
 
 def main():
-    # Instanciamos el motor conectado a SQLite
-    engine = CatalogEngine(db_path="data/catalogo.db", datos_iniciales=CATALOGO_JAZZ)
+    # En la Fase 4, el engine pesadamente acoplado (CatalogEngine) se reemplaza 
+    # por el cliente HTTP (CatalogAPIClient) sin que la interfaz gráfica lo note.
+    # Esto reduce la huella de memoria del proceso cliente a casi cero.
     
-    # Rutina de pre-arranque para la Fase 2: 
-    # Asegura que todos los registros tengan su representación vectorial generada.
-    print("\n\033[2mIniciando comprobación del motor de IA...\033[0m")
-    nuevos_indexados = engine.generar_embeddings_faltantes()
-    if nuevos_indexados > 0:
-        print(f"\033[92m✓ {nuevos_indexados} registros indexados semánticamente.\033[0m")
+    print("\033[2mConectando con la API Local en puerto 8000...\033[0m")
+    client = CatalogAPIClient(base_url="http://127.0.0.1:8000")
     
-    # Lanzamos el loop de la CLI que consumirá el motor adaptado
-    app = CatalogCLI(engine)
+    # Inyectamos el cliente en la CLI existente
+    app = CatalogCLI(client)
     app.ejecutar()
-
 
 if __name__ == "__main__":
     main()
