@@ -1,0 +1,10 @@
+# Dependencias base
+numpy
+streamlit
+
+# Procesamiento de Lenguaje Natural y Embeddings
+torch
+transformers
+huggingface-hub
+tokenizers
+sentence-transformers
