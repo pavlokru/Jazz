@@ -6,7 +6,7 @@ import numpy as np
 from typing import Dict, List, Optional
 
 class CatalogEngine:
-    """Motor RAG y persistencia SQLite optimizado para bajo footprint de RAM en ARM64."""
+    """Motor RAG y persistencia SQLite optimizado para bajo footprint de RAM."""
 
     def __init__(
         self,
@@ -22,13 +22,11 @@ class CatalogEngine:
             self._sincronizar_datos_iniciales(datos_iniciales)
 
     def _preparar_entorno(self):
-        """Asegura la existencia del directorio base para evitar errores de I/O."""
         directorio = os.path.dirname(self.db_path)
         if directorio and not os.path.exists(directorio):
             os.makedirs(directorio, exist_ok=True)
 
     def _conectar(self):
-        """Conexión efímera para liberar recursos rápidamente en el OS."""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         return conn
@@ -53,15 +51,13 @@ class CatalogEngine:
             """)
 
     def _actualizar_esquema_v2(self):
-        """Añade soporte vectorial a la tabla existente sin romper datos (Fase 2)."""
         with self._conectar() as conn:
             try:
                 conn.execute("ALTER TABLE artistas ADD COLUMN embedding BLOB")
             except sqlite3.OperationalError:
-                pass  # La columna ya existe
+                pass 
 
     def _sincronizar_datos_iniciales(self, datos: List[Dict]):
-        """Carga en bloque sin sobreescribir IDs existentes (Evita O(N^2) en RAM)."""
         with self._conectar() as conn:
             for item in datos:
                 cursor = conn.execute("SELECT id FROM artistas WHERE id = ?", (item["id"],))
@@ -91,21 +87,19 @@ class CatalogEngine:
         ))
 
     def _fila_a_dict(self, fila) -> Dict:
-        """Hidrata los campos JSON bajo demanda y elimina el BLOB pesado."""
         d = dict(fila)
         campos_lista = ["corriente", "instrumento", "agrupaciones_propias", "colaboraciones_clave", "albumes_fundamentales"]
         for campo in campos_lista:
             d[campo] = json.loads(d[campo]) if d.get(campo) else []
         
-        # Fundamental: No retornar el vector binario a la UI para ahorrar RAM
+        # Eliminar el BLOB para no sobrecargar la RAM en la respuesta a la UI
         d.pop("embedding", None)
         return d
 
     def _cargar_modelo(self):
-        """Instancia el LLM solo en el momento de la búsqueda."""
+        """Instancia el modelo solo cuando es estrictamente necesario."""
         if self.modelo_embeddings is None:
             from sentence_transformers import SentenceTransformer
-            # Modelo de 470MB, ideal para arquitecturas limitadas
             self.modelo_embeddings = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
         return self.modelo_embeddings
 
@@ -115,32 +109,26 @@ class CatalogEngine:
         return vector.astype(np.float32).tobytes()
 
     def generar_embeddings_faltantes(self):
-        """Escanea la DB y vectoriza registros nuevos o sin procesar."""
         with self._conectar() as conn:
             filas = conn.execute("SELECT * FROM artistas WHERE embedding IS NULL").fetchall()
-            
             if not filas:
                 return 0
             
             for fila in filas:
                 d = self._fila_a_dict(fila)
-                # Compone un "documento" con el contexto clave del artista
                 doc = f"{d['nombre']}. Origen: {d.get('origen', '')}. Estilos: {' '.join(d.get('corriente', []))}. Instrumentos: {' '.join(d.get('instrumento', []))}."
-                
                 vector_bytes = self._texto_a_vector(doc)
                 conn.execute("UPDATE artistas SET embedding = ? WHERE id = ?", (vector_bytes, d["id"]))
             
-            # Liberación crítica de tensores de memoria
+            # Recolector de basura forzado para liberar tensores
             gc.collect()
             return len(filas)
 
     def buscar(self, criterio: str, umbral: float = 0.3) -> List[Dict]:
-        """Búsqueda semántica usando similitud del coseno (Sustituye búsqueda exacta)."""
         criterio_norm = criterio.strip()
         if not criterio_norm:
             return self.obtener_todos()
 
-        # Vectorizar el query de entrada
         vector_query = self._cargar_modelo().encode(criterio_norm, convert_to_numpy=True)
         
         resultados = []
@@ -149,8 +137,7 @@ class CatalogEngine:
             
             for fila in filas:
                 vector_db = np.frombuffer(fila["embedding"], dtype=np.float32)
-                
-                # Similitud del Coseno entre Query y Documento
+                # Producto punto normalizado (Similitud Coseno)
                 similitud = np.dot(vector_query, vector_db) / (np.linalg.norm(vector_query) * np.linalg.norm(vector_db))
                 
                 if similitud >= umbral:
@@ -158,19 +145,13 @@ class CatalogEngine:
                     d["_score"] = float(similitud)
                     resultados.append(d)
 
-        # Ordenar de mayor a menor relevancia y retornar
         resultados.sort(key=lambda x: x.get("_score", 0), reverse=True)
         return resultados
 
     def obtener_todos(self) -> List[Dict]:
         with self._conectar() as conn:
-            filas = conn.execute("SELECT * FROM artistas ORDER BY id ASC").fetchall()
+            filas = conn.execute("SELECT * FROM artistas ORDER BY nombre ASC").fetchall()
             return [self._fila_a_dict(f) for f in filas]
-
-    def obtener_por_id(self, item_id: int) -> Optional[Dict]:
-        with self._conectar() as conn:
-            fila = conn.execute("SELECT * FROM artistas WHERE id = ?", (item_id,)).fetchone()
-            return self._fila_a_dict(fila) if fila else None
 
     def agregar_nota(self, item_id: int, nueva_nota: str) -> bool:
         with self._conectar() as conn:
@@ -206,7 +187,6 @@ class CatalogEngine:
             }
             self._insertar_registro(conn, nuevo_item)
             
-        # Re-indexar para que el nuevo registro sea buscable semánticamente de inmediato
         self.generar_embeddings_faltantes()
         return nuevo_item
 

@@ -1,5 +1,22 @@
-.venv
+# Python / Cache
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+
+# Streamlit local y logs
+.streamlit/secrets.toml
+.streamlit/v1/
+
+# Base de datos local (Opcional: omitir si se desea mantener semilla)
+data/*.db
+
+# Sistema
 .DS_Store
+Thumbs.db
 
