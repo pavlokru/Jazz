@@ -97,10 +97,15 @@ class CatalogEngine:
         return d
 
     def _cargar_modelo(self):
-        """Instancia el modelo solo cuando es estrictamente necesario."""
+        """Instancia el modelo solo cuando es estrictamente necesario, limitando CPU."""
         if self.modelo_embeddings is None:
+            import torch
+            # Forzar a PyTorch a usar un solo hilo (CRÍTICO para Streamlit Cloud)
+            torch.set_num_threads(1)
+            
             from sentence_transformers import SentenceTransformer
-            self.modelo_embeddings = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+            # Especificar 'cpu' evita que busque GPUs y consuma ciclos extra
+            self.modelo_embeddings = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2', device='cpu')
         return self.modelo_embeddings
 
     def _texto_a_vector(self, texto: str) -> bytes:

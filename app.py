@@ -1,7 +1,14 @@
+import os
+# Limitar agresivamente el multithreading para evitar penalizaciones de CPU en Streamlit Cloud
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import streamlit as st
 import json
 from core import CatalogEngine
-import os
 
 # Configuración inicial de la página
 st.set_page_config(page_title="JazzCatalog RAG", page_icon="🎷", layout="wide")
