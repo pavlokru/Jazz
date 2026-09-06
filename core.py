@@ -5,8 +5,16 @@ import gc
 import numpy as np
 from typing import Dict, List, Optional
 
+# --- PROTECCIÓN ESTRICTA CONTRA THROTTLING (Streamlit Cloud) ---
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 class CatalogEngine:
-    """Motor RAG y persistencia SQLite optimizado para bajo footprint de RAM."""
+    """Motor RAG y persistencia SQLite optimizado para bajo footprint de RAM y CPU."""
 
     def __init__(
         self,
@@ -14,7 +22,7 @@ class CatalogEngine:
         datos_iniciales: Optional[List[Dict]] = None,
     ):
         self.db_path = db_path
-        self.modelo_embeddings = None  # Carga Lazy
+        self.modelo_embeddings = None  # Carga Lazy (Perezosa)
         self._preparar_entorno()
         self._inicializar_db()
         self._actualizar_esquema_v2()
@@ -92,7 +100,7 @@ class CatalogEngine:
         for campo in campos_lista:
             d[campo] = json.loads(d[campo]) if d.get(campo) else []
         
-        # Eliminar el BLOB para no sobrecargar la RAM en la respuesta a la UI
+        # Eliminar el BLOB para no sobrecargar la RAM en la UI
         d.pop("embedding", None)
         return d
 
@@ -100,11 +108,15 @@ class CatalogEngine:
         """Instancia el modelo solo cuando es estrictamente necesario, limitando CPU."""
         if self.modelo_embeddings is None:
             import torch
-            # Forzar a PyTorch a usar un solo hilo (CRÍTICO para Streamlit Cloud)
-            torch.set_num_threads(1)
+            
+            # Protección contra reejecuciones
+            try:
+                torch.set_num_threads(1)
+                torch.set_num_interop_threads(1)
+            except RuntimeError:
+                pass
             
             from sentence_transformers import SentenceTransformer
-            # Especificar 'cpu' evita que busque GPUs y consuma ciclos extra
             self.modelo_embeddings = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2', device='cpu')
         return self.modelo_embeddings
 
@@ -114,6 +126,7 @@ class CatalogEngine:
         return vector.astype(np.float32).tobytes()
 
     def generar_embeddings_faltantes(self):
+        """Genera vectores ÚNICAMENTE para registros nuevos o actualizados."""
         with self._conectar() as conn:
             filas = conn.execute("SELECT * FROM artistas WHERE embedding IS NULL").fetchall()
             if not filas:
@@ -121,11 +134,19 @@ class CatalogEngine:
             
             for fila in filas:
                 d = self._fila_a_dict(fila)
-                doc = f"{d['nombre']}. Origen: {d.get('origen', '')}. Estilos: {' '.join(d.get('corriente', []))}. Instrumentos: {' '.join(d.get('instrumento', []))}."
+                # NOTA: Se incluye la biografía ('nota') en el texto base para la búsqueda semántica
+                texto_nota = d.get("nota", "") or ""
+                doc = (
+                    f"{d['nombre']}. "
+                    f"Origen: {d.get('origen', '')}. "
+                    f"Estilos: {' '.join(d.get('corriente', []))}. "
+                    f"Instrumentos: {' '.join(d.get('instrumento', []))}. "
+                    f"Biografía y Apuntes: {texto_nota}"
+                )
                 vector_bytes = self._texto_a_vector(doc)
                 conn.execute("UPDATE artistas SET embedding = ? WHERE id = ?", (vector_bytes, d["id"]))
             
-            # Recolector de basura forzado para liberar tensores
+            # Recolector de basura forzado para liberar tensores de la memoria
             gc.collect()
             return len(filas)
 
@@ -142,7 +163,6 @@ class CatalogEngine:
             
             for fila in filas:
                 vector_db = np.frombuffer(fila["embedding"], dtype=np.float32)
-                # Producto punto normalizado (Similitud Coseno)
                 similitud = np.dot(vector_query, vector_db) / (np.linalg.norm(vector_query) * np.linalg.norm(vector_db))
                 
                 if similitud >= umbral:
@@ -165,9 +185,11 @@ class CatalogEngine:
                 return False
             
             nota_actual = fila["nota"]
-            nota_final = f"{nota_actual}\n   • {nueva_nota}" if nota_actual else f"• {nueva_nota}"
+            nota_final = f"{nota_actual}\n\n• {nueva_nota}" if nota_actual else f"• {nueva_nota}"
             
-            conn.execute("UPDATE artistas SET nota = ? WHERE id = ?", (nota_final, item_id))
+            # CRÍTICO: Poner embedding = NULL obliga a recalcular el vector de este artista
+            # en la próxima llamada a generar_embeddings_faltantes().
+            conn.execute("UPDATE artistas SET nota = ?, embedding = NULL WHERE id = ?", (nota_final, item_id))
             return True
 
     def agregar_item(self, nombre: str, origen: str, corriente: List[str], instrumento: List[str], tipo_agrupacion: str, agrupaciones_propias: List[str], colaboraciones_clave: List[str], albumes_fundamentales: List[str], anio_inicio: Optional[int], anio_fin: Optional[int]) -> Dict:
