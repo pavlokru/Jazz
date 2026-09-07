@@ -126,19 +126,31 @@ with tab_rag:
 # ------------------------------------------
 # TAB 2: EXPLORADOR COMPLETO (Actualizado al nuevo esquema)
 # ------------------------------------------
+# ------------------------------------------
+# TAB 2: EXPLORador COMPLETO (Con Filtro Amplio)
+# ------------------------------------------
 with tab_explorador:
     st.subheader("Directorio de Artistas")
     
-    filtro_texto = st.text_input("Filtrar por nombre o país en el catálogo activo", "")
+    # Nuevo filtro amplio
+    filtro_texto = st.text_input(
+        "🔍 Buscar por nombre, origen, estilo o instrumento", 
+        placeholder="Ej: Cuba, Trompeta, Bebop..."
+    )
     
     artistas_filtrados = todos_artistas
     if filtro_texto.strip():
         f = filtro_texto.lower()
         artistas_filtrados = [
             a for a in todos_artistas 
-            if f in a['nombre'].lower() or f in (a.get('origen') or '').lower()
+            if f in str(a.get('nombre', '')).lower() 
+            or f in str(a.get('origen', '')).lower()
+            or any(f in str(c).lower() for c in a.get('corriente', []))
+            or any(f in str(i).lower() for i in a.get('instrumento', []))
         ]
         
+    st.caption(f"Mostrando {len(artistas_filtrados)} resultados.")
+    
     for art in artistas_filtrados:
         with st.expander(f"👤 {art['nombre']} ({art.get('origen', 'Origen N/D')})"):
             c1, c2 = st.columns(2)
@@ -247,4 +259,33 @@ with tab_gestion:
                         st.error("Error al guardar la nota.")
         else:
             st.info("El catálogo está vacío.")
+
+
+# ------------------------------------------
+# TAB 3: GESTIÓN DE CATÁLOGO (Agregar botón de backup)
+# ------------------------------------------
+with tab_gestion:
+    
+    # ... (Tu código existente de los formularios form_nuevo_artista_v3 y form_agregar_nota_v3) ...
+
+    st.divider()
+    
+    # Nueva sección de Respaldos
+    st.subheader("💾 Respaldo de Base de Datos")
+    st.info("Descarga la base de datos SQLite actualizada para resguardar los últimos embeddings generados o sincronizar tu entorno local.")
+    
+    db_path = "data/catalogo.db"
+    
+    # Verificamos que el archivo exista antes de ofrecer la descarga
+    if os.path.exists(db_path):
+        with open(db_path, "rb") as f:
+            st.download_button(
+                label="⬇️ Descargar catalogo.db",
+                data=f,
+                file_name="catalogo.db",
+                mime="application/octet-stream",
+                use_container_width=True
+            )
+    else:
+        st.warning("El archivo de base de datos aún no se ha creado.")
 
