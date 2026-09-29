@@ -1,0 +1,10 @@
+# Interfaz Web
+streamlit>=1.35.0
+
+# Motor de Embeddings y Procesamiento
+sentence-transformers>=2.7.0
+
+# Cálculo Vectorial y Tensores
+numpy>=1.24.0,<2.0.0
+torch>=2.2.0
+torchvision>=0.17.0
