@@ -5,9 +5,7 @@
     "context": ".."
   },
   "workspaceFolder": "/workspace",
-  "mounts": [
-    "source=jazzcatalog-hf-cache,target=/root/.cache/huggingface,type=volume"
-  ],
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind", 
   "customizations": {
     "vscode": {
       "settings": {
