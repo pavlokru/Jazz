@@ -1,17 +1,43 @@
 import sqlite3
 import json
+import torch
 import os
 import gc
 import numpy as np
 from typing import Dict, List, Optional
 
 # --- PROTECCIÓN ESTRICTA CONTRA THROTTLING (Streamlit Cloud) ---
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
-os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
-os.environ["NUMEXPR_NUM_THREADS"] = "1"
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+IS_DOCKER = os.getenv("IS_DOCKER", "false").lower() == "true"
+
+if IS_DOCKER:
+    # Optimización de alto rendimiento local (Intel i5-1235U)
+    NUM_THREADS = int(os.getenv("OMP_NUM_THREADS", "4"))
+    os.environ["OMP_NUM_THREADS"] = str(NUM_THREADS)
+    os.environ["OPENBLAS_NUM_THREADS"] = str(NUM_THREADS)
+    os.environ["MKL_NUM_THREADS"] = str(NUM_THREADS)
+    os.environ["VECLIB_MAXIMUM_THREADS"] = str(NUM_THREADS)
+    os.environ["NUMEXPR_NUM_THREADS"] = str(NUM_THREADS)
+    os.environ["TOKENIZERS_PARALLELISM"] = "true"
+    
+    try:
+        torch.set_num_threads(NUM_THREADS)
+        torch.set_num_interop_threads(NUM_THREADS)
+    except RuntimeError:
+        pass
+else:
+    # Protección para entornos restringidos (Streamlit Cloud)
+    os.environ["OMP_NUM_THREADS"] = "1"
+    os.environ["OPENBLAS_NUM_THREADS"] = "1"
+    os.environ["MKL_NUM_THREADS"] = "1"
+    os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+    os.environ["NUMEXPR_NUM_THREADS"] = "1"
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    
+    try:
+        torch.set_num_threads(1)
+        torch.set_num_interop_threads(1)
+    except RuntimeError:
+        pass
 
 class CatalogEngine:
     """Motor RAG y persistencia SQLite optimizado para bajo footprint de RAM y CPU."""
