@@ -66,7 +66,7 @@ engine = obtener_motor()
 # BARRA LATERAL (Métricas y Filtros)
 # ==========================================
 with st.sidebar:
-    st.header("🎷 JazzCatalog")
+    st.header("🎷JazzCatalog")
     st.caption("Sistema Semantic RAG v2.0")
     st.divider()
     
@@ -88,7 +88,7 @@ with st.sidebar:
 # ==========================================
 # ESTRUCTURA PRINCIPAL DE NAVEGACIÓN
 # ==========================================
-st.title("🎷 JazzCatalog RAG")
+st.title("🎷JazzCatalog RAG")
 st.markdown("Búsqueda semántica vectorial y gestión avanzada del catálogo de jazz.")
 
 tab_rag, tab_explorador, tab_gestion = st.tabs([
