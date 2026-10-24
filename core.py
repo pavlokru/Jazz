@@ -1,9 +1,9 @@
 import sqlite3
 import json
-import torch
 import os
 import gc
 import numpy as np
+import torch
 from typing import Dict, List, Optional
 
 # --- PROTECCIÓN ESTRICTA CONTRA THROTTLING (Streamlit Cloud) ---
@@ -42,16 +42,14 @@ else:
 class CatalogEngine:
     """Motor RAG y persistencia SQLite optimizado para bajo footprint de RAM y CPU."""
 
-    def __init__(
-        self,
-        db_path: str = "data/catalogo.db",
-        datos_iniciales: Optional[List[Dict]] = None,
-    ):
-        self.db_path = db_path
-        self.modelo_embeddings = None  # Carga Lazy (Perezosa)
+    def __init__(self, db_path: str = None, datos_iniciales: List[Dict] = None):
+        self.db_path = db_path or os.path.join(os.getcwd(), "data", "catalogo.db")
+        self.modelo_embeddings = None
+        
         self._preparar_entorno()
         self._inicializar_db()
         self._actualizar_esquema_v2()
+        
         if datos_iniciales:
             self._sincronizar_datos_iniciales(datos_iniciales)
 
@@ -133,9 +131,6 @@ class CatalogEngine:
     def _cargar_modelo(self):
         """Instancia el modelo solo cuando es estrictamente necesario, limitando CPU."""
         if self.modelo_embeddings is None:
-            import torch
-            
-            # Protección contra reejecuciones
             try:
                 torch.set_num_threads(1)
                 torch.set_num_interop_threads(1)
@@ -151,7 +146,7 @@ class CatalogEngine:
         vector = modelo.encode(texto, convert_to_numpy=True)
         return vector.astype(np.float32).tobytes()
 
-    def generar_embeddings_faltantes(self):
+    def generar_embeddings_faltantes(self) -> int:
         """Genera vectores ÚNICAMENTE para registros nuevos o actualizados."""
         with self._conectar() as conn:
             filas = conn.execute("SELECT * FROM artistas WHERE embedding IS NULL").fetchall()
@@ -160,7 +155,6 @@ class CatalogEngine:
             
             for fila in filas:
                 d = self._fila_a_dict(fila)
-                # NOTA: Se incluye la biografía ('nota') en el texto base para la búsqueda semántica
                 texto_nota = d.get("nota", "") or ""
                 doc = (
                     f"{d['nombre']}. "
@@ -171,8 +165,8 @@ class CatalogEngine:
                 )
                 vector_bytes = self._texto_a_vector(doc)
                 conn.execute("UPDATE artistas SET embedding = ? WHERE id = ?", (vector_bytes, d["id"]))
+                conn.commit()
             
-            # Recolector de basura forzado para liberar tensores de la memoria
             gc.collect()
             return len(filas)
 
@@ -211,11 +205,10 @@ class CatalogEngine:
                 return False
             
             nota_actual = fila["nota"]
-            nota_final = f"{nota_actual}\n\n• {nueva_nota}" if nota_actual else f"• {nueva_nota}"
+            nota_final = f"{nota_actual}\n\n{nueva_nota}" if nota_actual else f"• {nueva_nota}"
             
-            # CRÍTICO: Poner embedding = NULL obliga a recalcular el vector de este artista
-            # en la próxima llamada a generar_embeddings_faltantes().
             conn.execute("UPDATE artistas SET nota = ?, embedding = NULL WHERE id = ?", (nota_final, item_id))
+            conn.commit()
             return True
 
     def agregar_item(self, nombre: str, origen: str, corriente: List[str], instrumento: List[str], tipo_agrupacion: str, agrupaciones_propias: List[str], colaboraciones_clave: List[str], albumes_fundamentales: List[str], anio_inicio: Optional[int], anio_fin: Optional[int]) -> Dict:
@@ -239,7 +232,21 @@ class CatalogEngine:
                 "nota": None
             }
             self._insertar_registro(conn, nuevo_item)
+            conn.commit()
             
         self.generar_embeddings_faltantes()
         return nuevo_item
 
+    def eliminar_artista(self, artist_id: int) -> bool:
+        """Elimina un artista de la base de datos SQLite."""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA foreign_keys = ON;")
+                # Se remueve la línea DELETE FROM notas porque no existe tal tabla
+                cursor.execute("DELETE FROM artistas WHERE id = ?", (artist_id,))
+                conn.commit()
+            return True
+        except Exception as e:
+            print(f"Error al eliminar artista ID {artist_id}: {e}")
+            return False
