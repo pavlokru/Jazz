@@ -1,49 +1,20 @@
 services:
-  api:
+  app:
     build:
       context: .
       dockerfile: .devcontainer/Dockerfile
-    container_name: jazzcatalog_api
+    container_name: jazzcatalog_app
     restart: always
-    working_dir: /workspace          # <--- GARANTIZA QUE LEA DESDE EL VOLUMEN MONTADO
-    command: uvicorn api:app --host 0.0.0.0 --port 8000 --reload
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/workspace
-      - hf_cache:/root/.cache/huggingface
-    environment:
-      - IS_DOCKER=true
-      - OMP_NUM_THREADS=4
-      - MKL_NUM_THREADS=4
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8000/catalogo" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  streamlit:
-    build:
-      context: .
-      dockerfile: .devcontainer/Dockerfile
-    container_name: jazzcatalog_streamlit
-    restart: always
-    working_dir: /workspace          # <--- GARANTIZA QUE LEA DESDE EL VOLUMEN MONTADO
+    working_dir: /workspace
+    # Este comando mantiene la app viva y en ejecución
     command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0 --server.fileWatcherType=auto
     ports:
       - "8501:8501"
     volumes:
       - .:/workspace
-      - hf_cache:/root/.cache/huggingface
-    environment:
-      - IS_DOCKER=true
-      - API_URL=http://api:8000
-    depends_on:
-      api:
-        condition: service_healthy
-
-volumes:
-  hf_cache:
-    name: jazzcatalog-hf-cache
-    external: true
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8501/_stcore/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

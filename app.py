@@ -1,25 +1,10 @@
 import os
-import torch
-
-try:
-    torch.set_num_threads(1)
-    torch.set_num_interop_threads(1)
-except RuntimeError:
-    pass
-
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
-os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
-os.environ["NUMEXPR_NUM_THREADS"] = "1"
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
 import streamlit as st
 import json
 from core import CatalogEngine
 
 st.set_page_config(
-    page_title="JazzCatalog RAG",
+    page_title="JazzCatalog 3.0",
     page_icon="🎷",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -40,7 +25,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-@st.cache_resource(show_spinner="Cargando motor RAG y base de datos...")
+@st.cache_resource(show_spinner="Cargando base de datos...")
 def obtener_motor():
     datos_iniciales = None
     if os.path.exists("data/data.py"):
@@ -50,14 +35,12 @@ def obtener_motor():
         except Exception:
             pass
             
-    # Instanciamos sin el argumento problemático
     engine = CatalogEngine()
     
     # Sincronizamos manualmente si hay datos
     if datos_iniciales:
         engine._sincronizar_datos_iniciales(datos_iniciales)
         
-    engine.generar_embeddings_faltantes()
     return engine
 
 engine = obtener_motor()
@@ -67,7 +50,7 @@ engine = obtener_motor()
 # ==========================================
 with st.sidebar:
     st.header("🎷JazzCatalog")
-    st.caption("Sistema Semantic RAG v3.0 (Ultra Ligera)")
+    st.caption("Sistema de Catálogo v3.0 (Ultra Ligera)")
     st.divider()
     
     todos_artistas = engine.obtener_todos()
@@ -87,31 +70,27 @@ with st.sidebar:
 # ==========================================
 # NAVEGACIÓN
 # ==========================================
-st.title("🎷JazzCatalog RAG")
-st.markdown("Búsqueda semántica vectorial y gestión avanzada del catálogo de jazz.")
+st.title("🎷JazzCatalog 3.0")
+st.markdown("Búsqueda textual directa y gestión avanzada del catálogo de jazz.")
 
 tab_rag, tab_explorador, tab_gestion = st.tabs([
-    "🔍 Búsqueda RAG", 
+    "🔍 Búsqueda Textual", 
     "📚 Explorador Completo", 
     "📝 Gestión del Catálogo"
 ])
 
 # ------------------------------------------
-# TAB 1: BÚSQUEDA SEMÁNTICA
+# TAB 1: BÚSQUEDA TEXTUAL
 # ------------------------------------------
 with tab_rag:
-    col_q, col_u = st.columns([3, 1])
-    with col_q:
-        query = st.text_input("Consulta en lenguaje natural", placeholder="Ej: Pioneros del Latin Jazz y Bebop de Cuba", key="input_query")
-    with col_u:
-        umbral = st.slider("Umbral de Similitud", min_value=0.1, max_value=0.9, value=0.3, step=0.05)
+    query = st.text_input("Buscar artista, origen, estilo o instrumento", placeholder="Ej: Cuba, Trompeta, Bebop...", key="input_query")
 
     if query.strip():
-        resultados = engine.buscar(query, umbral=umbral)
+        resultados = engine.buscar(query)
         if resultados:
             st.subheader(f"Resultados Encontrados ({len(resultados)})")
             for res in resultados:
-                with st.expander(f"{res['nombre']} - Similitud: {res.get('_score', 0):.3f}"):
+                with st.expander(f"{res['nombre']}"):
                     st.write(f"**Origen:** {res.get('origen')} | **Estilos:** {', '.join(res.get('corriente', []))}")
                     if res.get("nota"):
                         st.info(res.get("nota"))
@@ -125,8 +104,8 @@ with tab_explorador:
     st.subheader("Directorio de Artistas")
     
     filtro_texto = st.text_input(
-        "🔍 Buscar por nombre, origen, estilo o instrumento", 
-        placeholder="Ej: Cuba, Trompeta, Bebop..."
+        "🔍 Filtrar en vivo", 
+        placeholder="Ej: Miles Davis, Piano..."
     )
     
     artistas_filtrados = todos_artistas
@@ -185,7 +164,7 @@ with tab_gestion:
             anio_fin = c_a2.number_input("Año fin (0 si sigue activo)", min_value=0, max_value=2100, value=0)
             
             nota_biografica = st.text_area("Nota biográfica / Apunte histórico (Opcional)", height=150)
-            btn_guardar = st.form_submit_button("Guardar Perfil e Indexar")
+            btn_guardar = st.form_submit_button("Guardar Perfil")
             
             if btn_guardar:
                 if not nombre.strip():
@@ -213,7 +192,6 @@ with tab_gestion:
                     
                     if nota_biografica.strip():
                         engine.agregar_nota(nuevo_item["id"], nota_biografica.strip())
-                        engine.generar_embeddings_faltantes() 
                         
                     st.toast(f"¡{nombre} registrado exitosamente!", icon="✅")
                     st.rerun()
@@ -231,7 +209,6 @@ with tab_gestion:
                 if btn_nota and nueva_nota.strip():
                     artist_id = opciones_artistas[seleccionado]
                     if engine.agregar_nota(artist_id, nueva_nota.strip()):
-                        engine.generar_embeddings_faltantes()
                         st.toast("Nota agregada correctamente", icon="📌")
                         st.rerun()
                     else:

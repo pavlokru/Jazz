@@ -1,11 +1,8 @@
 {
-  "name": "JazzCatalog RAG DevContainer",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
+  "name": "JazzCatalog 3.0 DevContainer",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
   "workspaceFolder": "/workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind", 
   "customizations": {
     "vscode": {
       "settings": {
@@ -21,7 +18,5 @@
         "mhutchie.git-graph"
       ]
     }
-  },
-  "forwardPorts": [8000, 8501],
-  "postCreateCommand": "pip install --no-cache-dir -r requirements.txt"
+  }
 }

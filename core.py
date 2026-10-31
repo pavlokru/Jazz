@@ -1,54 +1,16 @@
 import sqlite3
 import json
 import os
-import gc
-import numpy as np
-import torch
 from typing import Dict, List, Optional
 
-# --- PROTECCIÓN ESTRICTA CONTRA THROTTLING (Streamlit Cloud) ---
-IS_DOCKER = os.getenv("IS_DOCKER", "false").lower() == "true"
-
-if IS_DOCKER:
-    # Optimización de alto rendimiento local (Intel i5-1235U)
-    NUM_THREADS = int(os.getenv("OMP_NUM_THREADS", "4"))
-    os.environ["OMP_NUM_THREADS"] = str(NUM_THREADS)
-    os.environ["OPENBLAS_NUM_THREADS"] = str(NUM_THREADS)
-    os.environ["MKL_NUM_THREADS"] = str(NUM_THREADS)
-    os.environ["VECLIB_MAXIMUM_THREADS"] = str(NUM_THREADS)
-    os.environ["NUMEXPR_NUM_THREADS"] = str(NUM_THREADS)
-    os.environ["TOKENIZERS_PARALLELISM"] = "true"
-    
-    try:
-        torch.set_num_threads(NUM_THREADS)
-        torch.set_num_interop_threads(NUM_THREADS)
-    except RuntimeError:
-        pass
-else:
-    # Protección para entornos restringidos (Streamlit Cloud)
-    os.environ["OMP_NUM_THREADS"] = "1"
-    os.environ["OPENBLAS_NUM_THREADS"] = "1"
-    os.environ["MKL_NUM_THREADS"] = "1"
-    os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
-    os.environ["NUMEXPR_NUM_THREADS"] = "1"
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
-    
-    try:
-        torch.set_num_threads(1)
-        torch.set_num_interop_threads(1)
-    except RuntimeError:
-        pass
-
 class CatalogEngine:
-    """Motor RAG y persistencia SQLite optimizado para bajo footprint de RAM y CPU."""
+    """Motor de búsqueda textual pura y persistencia SQLite optimizado para bajo footprint de RAM y CPU."""
 
     def __init__(self, db_path: str = None, datos_iniciales: List[Dict] = None):
         self.db_path = db_path or os.path.join(os.getcwd(), "data", "catalogo.db")
-        self.modelo_embeddings = None
         
         self._preparar_entorno()
         self._inicializar_db()
-        self._actualizar_esquema_v2()
         
         if datos_iniciales:
             self._sincronizar_datos_iniciales(datos_iniciales)
@@ -81,13 +43,9 @@ class CatalogEngine:
                     nota TEXT
                 )
             """)
-
-    def _actualizar_esquema_v2(self):
-        with self._conectar() as conn:
-            try:
-                conn.execute("ALTER TABLE artistas ADD COLUMN embedding BLOB")
-            except sqlite3.OperationalError:
-                pass 
+            
+            # Nota: Si usas la base de datos vieja (v2), la columna 'embedding' 
+            # seguirá existiendo en el archivo .db, pero simplemente la ignoraremos.
 
     def _sincronizar_datos_iniciales(self, datos: List[Dict]):
         with self._conectar() as conn:
@@ -124,74 +82,30 @@ class CatalogEngine:
         for campo in campos_lista:
             d[campo] = json.loads(d[campo]) if d.get(campo) else []
         
-        # Eliminar el BLOB para no sobrecargar la RAM en la UI
+        # Eliminamos el BLOB del dict por si estamos conectando a la DB antigua de la v2
         d.pop("embedding", None)
         return d
 
-    def _cargar_modelo(self):
-        """Instancia el modelo solo cuando es estrictamente necesario, limitando CPU."""
-        if self.modelo_embeddings is None:
-            try:
-                torch.set_num_threads(1)
-                torch.set_num_interop_threads(1)
-            except RuntimeError:
-                pass
-            
-            from sentence_transformers import SentenceTransformer
-            self.modelo_embeddings = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2', device='cpu')
-        return self.modelo_embeddings
-
-    def _texto_a_vector(self, texto: str) -> bytes:
-        modelo = self._cargar_modelo()
-        vector = modelo.encode(texto, convert_to_numpy=True)
-        return vector.astype(np.float32).tobytes()
-
-    def generar_embeddings_faltantes(self) -> int:
-        """Genera vectores ÚNICAMENTE para registros nuevos o actualizados."""
-        with self._conectar() as conn:
-            filas = conn.execute("SELECT * FROM artistas WHERE embedding IS NULL").fetchall()
-            if not filas:
-                return 0
-            
-            for fila in filas:
-                d = self._fila_a_dict(fila)
-                texto_nota = d.get("nota", "") or ""
-                doc = (
-                    f"{d['nombre']}. "
-                    f"Origen: {d.get('origen', '')}. "
-                    f"Estilos: {' '.join(d.get('corriente', []))}. "
-                    f"Instrumentos: {' '.join(d.get('instrumento', []))}. "
-                    f"Biografía y Apuntes: {texto_nota}"
-                )
-                vector_bytes = self._texto_a_vector(doc)
-                conn.execute("UPDATE artistas SET embedding = ? WHERE id = ?", (vector_bytes, d["id"]))
-                conn.commit()
-            
-            gc.collect()
-            return len(filas)
-
-    def buscar(self, criterio: str, umbral: float = 0.3) -> List[Dict]:
+    def buscar(self, criterio: str) -> List[Dict]:
+        """Realiza una búsqueda textual directa usando LIKE."""
         criterio_norm = criterio.strip()
         if not criterio_norm:
             return self.obtener_todos()
-
-        vector_query = self._cargar_modelo().encode(criterio_norm, convert_to_numpy=True)
-        
-        resultados = []
-        with self._conectar() as conn:
-            filas = conn.execute("SELECT * FROM artistas WHERE embedding IS NOT NULL").fetchall()
             
-            for fila in filas:
-                vector_db = np.frombuffer(fila["embedding"], dtype=np.float32)
-                similitud = np.dot(vector_query, vector_db) / (np.linalg.norm(vector_query) * np.linalg.norm(vector_db))
-                
-                if similitud >= umbral:
-                    d = self._fila_a_dict(fila)
-                    d["_score"] = float(similitud)
-                    resultados.append(d)
-
-        resultados.sort(key=lambda x: x.get("_score", 0), reverse=True)
-        return resultados
+        termino = f"%{criterio_norm}%"
+        
+        with self._conectar() as conn:
+            query = """
+                SELECT * FROM artistas 
+                WHERE nombre LIKE ? 
+                   OR origen LIKE ? 
+                   OR corriente LIKE ? 
+                   OR instrumento LIKE ? 
+                   OR nota LIKE ?
+            """
+            filas = conn.execute(query, (termino, termino, termino, termino, termino)).fetchall()
+            
+        return [self._fila_a_dict(f) for f in filas]
 
     def obtener_todos(self) -> List[Dict]:
         with self._conectar() as conn:
@@ -205,9 +119,10 @@ class CatalogEngine:
                 return False
             
             nota_actual = fila["nota"]
+            # Añade la nota secuencialmente al historial existente
             nota_final = f"{nota_actual}\n\n{nueva_nota}" if nota_actual else f"• {nueva_nota}"
             
-            conn.execute("UPDATE artistas SET nota = ?, embedding = NULL WHERE id = ?", (nota_final, item_id))
+            conn.execute("UPDATE artistas SET nota = ? WHERE id = ?", (nota_final, item_id))
             conn.commit()
             return True
 
@@ -234,7 +149,6 @@ class CatalogEngine:
             self._insertar_registro(conn, nuevo_item)
             conn.commit()
             
-        self.generar_embeddings_faltantes()
         return nuevo_item
 
     def eliminar_artista(self, artist_id: int) -> bool:
@@ -243,7 +157,6 @@ class CatalogEngine:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute("PRAGMA foreign_keys = ON;")
-                # Se remueve la línea DELETE FROM notas porque no existe tal tabla
                 cursor.execute("DELETE FROM artistas WHERE id = ?", (artist_id,))
                 conn.commit()
             return True
